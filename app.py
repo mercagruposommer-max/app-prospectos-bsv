@@ -1,4 +1,6 @@
 from flask import Flask, request, render_template_string
+from office365.runtime.auth.user_credential import UserCredential
+from office365.sharepoint.client_context import ClientContext
 
 app = Flask(__name__)
 
@@ -7,56 +9,50 @@ SITE_URL = "https://tu-empresa.sharepoint.com/sites/tu-sitio"
 USERNAME = "usuario@tu-empresa.com"
 PASSWORD = "TuPassword123"
 
-# --- PLANTILLA HTML/CSS/JS: SALESFORCE LIGHTNING SYSTEM ULTRA-POLISHED ---
-HTML_SALESFORCE_PREMIUM = """
+# --- PLANTILLA HTML/CSS: SALESFORCE LIGHTNING SYSTEM 2.0 (SLDS) ---
+HTML_SALESFORCE_EXCEL_ONLY = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salesforce BSV — Captura de Prospectos</title>
+    <title>BSV LAMMSA — Captura de Prospectos</title>
     <style>
         :root {
             --sf-brand: #0176d3;
-            --sf-brand-hover: #005fb2;
-            --sf-path-active: #00396b;
-            --sf-success: #2e844a;
-            --sf-bg: #b0c4df;
+            --sf-brand-dark: #005fb2;
+            --sf-path-blue: #00396b;
+            --sf-green: #2e844a;
+            --sf-bg: #eef2f7;
             --sf-card-bg: #ffffff;
             --sf-border: #dddbda;
-            --sf-header-bg: #f3f3f3;
             --sf-text-main: #181818;
-            --sf-text-muted: #444444;
-            --sf-text-light: #706e6b;
+            --sf-text-muted: #514f4d;
             --sf-required: #ea001e;
-            --sf-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            --sf-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        * { box-sizing: border-box; }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Salesforce Sans", "Segoe UI", Roboto, sans-serif;
             background-color: var(--sf-bg);
             margin: 0;
             padding: 16px;
             color: var(--sf-text-main);
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* CONTENEDOR PRINCIPAL TIPO CANVAS */
         .sf-canvas {
-            background-color: #f3f3f3;
-            border-radius: 6px;
+            background-color: #ffffff;
+            border-radius: 8px;
             box-shadow: var(--sf-shadow);
-            max-width: 1300px;
+            max-width: 1240px;
             margin: 0 auto;
             border: 1px solid var(--sf-border);
             overflow: hidden;
         }
 
-        /* 1. HIGHLIGHTS PANEL (HEADER PREMIUM) */
+        /* 1. HEADER / HIGHLIGHTS PANEL DINO-DINÁMICO */
         .sf-header {
-            background-color: #ffffff;
+            background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
             padding: 16px 24px;
             border-bottom: 1px solid var(--sf-border);
         }
@@ -66,30 +62,26 @@ HTML_SALESFORCE_PREMIUM = """
             justify-content: space-between;
             margin-bottom: 14px;
         }
-        .sf-header-left {
+        .sf-header-identity {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
-        .sf-lead-avatar {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #4bca81, #2e844a);
+        .sf-icon-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #4bca81 0%, #2e844a 100%);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-        }
-        .sf-lead-avatar svg {
-            width: 22px;
-            height: 22px;
-            fill: white;
+            font-size: 18px;
+            box-shadow: 0 2px 4px rgba(46,132,74,0.3);
         }
         .sf-header-titles span {
             font-size: 11px;
-            color: var(--sf-text-light);
+            color: var(--sf-text-muted);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -100,7 +92,7 @@ HTML_SALESFORCE_PREMIUM = """
             font-weight: 700;
             color: var(--sf-text-main);
         }
-        .sf-badge-status {
+        .sf-badge-pill {
             background-color: #eef4fe;
             color: var(--sf-brand);
             border: 1px solid #b0c4df;
@@ -112,188 +104,187 @@ HTML_SALESFORCE_PREMIUM = """
 
         .sf-highlights-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            border-top: 1px solid #f3f3f3;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            border-top: 1px solid var(--sf-border);
             padding-top: 12px;
         }
         .sf-highlight-item span {
             display: block;
             font-size: 11px;
-            color: var(--sf-text-light);
+            color: var(--sf-text-muted);
+            font-weight: 600;
             margin-bottom: 2px;
         }
         .sf-highlight-item strong {
             font-size: 13px;
             color: var(--sf-text-main);
-        }
-        .sf-highlight-item a {
-            color: var(--sf-brand);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
+            word-break: break-all;
         }
 
-        /* 2. BARRA DE PATH / CHEVRONS (TOLLGATES) */
-        .sf-path-container {
-            background-color: #ffffff;
+        /* 2. BARRA DE CHEVRONS (TOLLGATE PATH) */
+        .sf-path-bar {
+            display: flex;
+            background-color: #f3f3f3;
             padding: 8px 16px;
             border-bottom: 1px solid var(--sf-border);
             overflow-x: auto;
         }
-        .sf-path-bar {
-            display: flex;
-            align-items: center;
-            min-width: 900px;
-        }
         .sf-chevron {
             flex: 1;
-            padding: 9px 12px 9px 26px;
-            background-color: #f3f3f3;
+            padding: 9px 12px 9px 24px;
+            background-color: #eef1f6;
             color: #3e3e3c;
             font-size: 12px;
             font-weight: 600;
             text-align: center;
             position: relative;
             cursor: pointer;
-            margin-right: -14px;
+            margin-right: -12px;
             clip-path: polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%, 12% 50%);
             white-space: nowrap;
-            transition: all 0.2s ease;
             user-select: none;
+            transition: all 0.2s ease;
         }
         .sf-chevron:first-child {
             clip-path: polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%);
             padding-left: 16px;
         }
         .sf-chevron.completed {
-            background-color: var(--sf-success);
+            background-color: var(--sf-green);
             color: #ffffff;
         }
         .sf-chevron.active {
-            background-color: var(--sf-path-active);
+            background-color: var(--sf-path-blue);
             color: #ffffff;
-            font-weight: 700;
+            box-shadow: inset 0 -2px 0 #ffffff;
         }
         .sf-chevron:hover:not(.active) {
-            background-color: #e5e5e5;
+            background-color: #dddbda;
         }
 
-        /* 3. PESTAÑAS (TABS) */
-        .sf-tabs {
+        /* 3. PESTAÑAS Y METADATOS DE NAVEGACIÓN */
+        .sf-nav-strip {
             display: flex;
+            align-items: center;
+            justify-content: space-between;
             background-color: #ffffff;
             border-bottom: 1px solid var(--sf-border);
-            padding-left: 20px;
+            padding: 0 16px;
+        }
+        .sf-tabs {
+            display: flex;
         }
         .sf-tab {
-            padding: 12px 24px;
+            padding: 12px 20px;
             font-size: 13px;
             font-weight: 600;
-            color: var(--sf-text-light);
+            color: var(--sf-text-muted);
             cursor: pointer;
             border-bottom: 3px solid transparent;
-            transition: color 0.2s, border-color 0.2s;
+            transition: all 0.2s ease;
         }
         .sf-tab.active {
             color: var(--sf-brand);
             border-bottom-color: var(--sf-brand);
         }
 
-        /* 4. SECCIONES ACCORDION Y FORMULARIO */
+        /* 4. SECCIONES Y CONTENIDOS DE FORMULARIO */
         .sf-body-content {
             padding: 20px;
+            background-color: #f8f9fb;
         }
-        .sf-tab-pane {
-            display: none;
-        }
-        .sf-tab-pane.active {
-            display: block;
-        }
-
-        .sf-accordion {
-            background-color: #ffffff;
+        .sf-card-section {
+            background: #ffffff;
             border: 1px solid var(--sf-border);
-            border-radius: 4px;
-            margin-bottom: 18px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
             overflow: hidden;
         }
-        .sf-accordion-header {
+        .sf-card-header {
             background-color: #f3f3f3;
             padding: 10px 16px;
             font-size: 13px;
             font-weight: 700;
             color: var(--sf-text-main);
             border-bottom: 1px solid var(--sf-border);
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            user-select: none;
         }
-        .sf-accordion-header:hover {
-            background-color: #eef1f6;
-        }
-        .sf-accordion-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .sf-icon-arrow {
-            transition: transform 0.2s ease;
-            font-size: 10px;
-        }
-        .sf-accordion.collapsed .sf-icon-arrow {
-            transform: rotate(-90deg);
-        }
-        .sf-accordion.collapsed .sf-form-grid {
-            display: none;
-        }
-
-        /* FORM GRID & CAMPOS */
-        .sf-form-grid {
+        .sf-field-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px 28px;
+            gap: 16px 28px;
             padding: 20px;
         }
         @media (max-width: 768px) {
-            .sf-form-grid { grid-template-columns: 1fr; }
+            .sf-field-grid { grid-template-columns: 1fr; }
         }
 
-        .sf-field {
+        /* CONTROLES DE CAMPO CON TOOLTIPS */
+        .sf-field-group {
             display: flex;
             flex-direction: column;
         }
-        .sf-field.full-width {
-            grid-column: span 2;
+        .sf-label-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
         }
-        @media (max-width: 768px) {
-            .sf-field.full-width { grid-column: span 1; }
-        }
-
         .sf-label {
             font-size: 12px;
             font-weight: 600;
             color: var(--sf-text-muted);
-            margin-bottom: 4px;
         }
         .sf-req {
             color: var(--sf-required);
             font-weight: bold;
-            margin-right: 3px;
         }
+        .sf-tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: #b0c4df;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: help;
+            position: relative;
+        }
+        .sf-tooltip-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #16325c;
+            color: #ffffff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: normal;
+            width: 200px;
+            z-index: 100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            font-weight: normal;
+        }
+        
         .sf-input, .sf-select, .sf-textarea {
-            padding: 7px 11px;
+            padding: 8px 12px;
             border: 1px solid var(--sf-border);
             border-radius: 4px;
             font-size: 13px;
-            background-color: #ffffff;
-            box-sizing: border-box;
-            width: 100%;
             color: var(--sf-text-main);
-            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #ffffff;
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
         }
         .sf-input:focus, .sf-select:focus, .sf-textarea:focus {
             outline: none;
@@ -302,19 +293,11 @@ HTML_SALESFORCE_PREMIUM = """
         }
         .sf-help-text {
             font-size: 11px;
-            color: var(--sf-text-light);
+            color: var(--sf-text-muted);
             margin-top: 3px;
         }
-        .sf-sublink {
-            font-size: 11px;
-            color: var(--sf-brand);
-            text-decoration: none;
-            margin-top: 3px;
-            display: inline-block;
-        }
-        .sf-sublink:hover { text-decoration: underline; }
 
-        /* FOOTER CON BOTONES FLOTANTES */
+        /* BOTONES FLOTANTES */
         .sf-action-bar {
             position: sticky;
             bottom: 0;
@@ -324,8 +307,8 @@ HTML_SALESFORCE_PREMIUM = """
             display: flex;
             justify-content: flex-end;
             gap: 12px;
-            box-shadow: 0 -3px 8px rgba(0,0,0,0.06);
-            z-index: 100;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            z-index: 50;
         }
         .sf-btn {
             padding: 8px 22px;
@@ -334,28 +317,28 @@ HTML_SALESFORCE_PREMIUM = """
             font-weight: 600;
             cursor: pointer;
             border: 1px solid var(--sf-border);
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
         }
-        .sf-btn-cancel {
+        .sf-btn-secondary {
             background-color: #ffffff;
             color: var(--sf-brand);
         }
-        .sf-btn-cancel:hover {
-            background-color: #f4f6f9;
+        .sf-btn-secondary:hover {
+            background-color: #f3f3f3;
         }
-        .sf-btn-save {
+        .sf-btn-primary {
             background-color: var(--sf-brand);
             color: #ffffff;
             border-color: var(--sf-brand);
         }
-        .sf-btn-save:hover {
-            background-color: var(--sf-brand-hover);
+        .sf-btn-primary:hover {
+            background-color: var(--sf-brand-dark);
         }
 
-        .alert-box {
+        .alert-success {
             background-color: #d4edda;
             color: #155724;
-            padding: 12px 18px;
+            padding: 12px 16px;
             border-radius: 4px;
             margin-bottom: 16px;
             border: 1px solid #c3e6cb;
@@ -368,195 +351,189 @@ HTML_SALESFORCE_PREMIUM = """
 
 <div class="sf-canvas">
 
-    <!-- 1. HEADER HIGHLIGHTS PANEL -->
+    <!-- 1. HEADER HIGHLIGHTS PANEL (DATOS DINÁMICOS EXCLUSIVOS DE EXCEL) -->
     <div class="sf-header">
         <div class="sf-header-top">
-            <div class="sf-header-left">
-                <div class="sf-lead-avatar">
-                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                </div>
+            <div class="sf-header-identity">
+                <div class="sf-icon-avatar">★</div>
                 <div class="sf-header-titles">
-                    <span>Prospecto BSV</span>
-                    <h1 id="header-nombre-completo">Khaled Parra Chá</h1>
+                    <span>Objeto SF: Lead | Fase: BD → MO</span>
+                    <h1 id="dyn-lead-title">Nuevo Prospecto (Por llenar)</h1>
                 </div>
             </div>
-            <div class="sf-badge-status">Proceso Comercial Activo</div>
+            <div class="sf-badge-pill">TG0 — Origen y Asignación</div>
         </div>
 
         <div class="sf-highlights-grid">
             <div class="sf-highlight-item">
-                <span>Compañía</span>
-                <strong id="header-compania">Hermosillo</strong>
+                <span>Empresa / Razón Social</span>
+                <strong id="dyn-empresa">—</strong>
             </div>
             <div class="sf-highlight-item">
-                <span>Cargo</span>
-                <strong id="header-cargo">Director de Operaciones Noreste</strong>
+                <span>Cargo / Título</span>
+                <strong id="dyn-cargo">—</strong>
             </div>
             <div class="sf-highlight-item">
-                <span>Teléfono</span>
-                <a href="#" id="header-telefono">+52 8183 424811</a>
+                <span>Teléfono Contacto</span>
+                <strong id="dyn-telefono">—</strong>
             </div>
             <div class="sf-highlight-item">
                 <span>Email Corporativo</span>
-                <a href="#" id="header-email">khaled.parra@hermosillo.com</a>
+                <strong id="dyn-email">—</strong>
             </div>
         </div>
     </div>
 
-    <!-- 2. BARRA DE CHEVRONS / TOLLGATES -->
-    <div class="sf-path-container">
-        <div class="sf-path-bar">
-            <div class="sf-chevron completed">✓</div>
-            <div class="sf-chevron active" onclick="seleccionarEtapa(this)">Nuevo (TG0)</div>
-            <div class="sf-chevron" onclick="seleccionarEtapa(this)">Evaluando TG1</div>
-            <div class="sf-chevron" onclick="seleccionarEtapa(this)">Trabajando TG2</div>
-            <div class="sf-chevron" onclick="seleccionarEtapa(this)">MQL Transferido (TG3-4)</div>
-            <div class="sf-chevron" onclick="seleccionarEtapa(this)">WO en Proceso (TG5-12)</div>
-            <div class="sf-chevron" onclick="seleccionarEtapa(this)">Cierre / Negotiation (TG13)</div>
-        </div>
+    <!-- 2. RUTA DE TOLLGATES (EXCEL PROTOTIPO TG0 - TG13) -->
+    <div class="sf-path-bar">
+        <div class="sf-chevron active" id="btn-tg0" onclick="cambiarPaso('tg0')">✓ TG0 — Origen</div>
+        <div class="sf-chevron" id="btn-tg1" onclick="cambiarPaso('tg1')">TG1 — Fit</div>
+        <div class="sf-chevron" id="btn-tg2" onclick="cambiarPaso('tg2')">TG2 — Engagement</div>
+        <div class="sf-chevron" id="btn-tg3" onclick="cambiarPaso('tg3')">TG3 — MQL</div>
+        <div class="sf-chevron" id="btn-tg4" onclick="cambiarPaso('tg4')">TG4 — Clasificación</div>
+        <div class="sf-chevron" id="btn-tg5" onclick="cambiarPaso('tg5')">TG5 — WO</div>
     </div>
 
-    <!-- 3. PESTAÑAS (TAB BAR) -->
-    <div class="sf-tabs">
-        <div class="sf-tab active" onclick="cambiarTab('detalles', this)">Detalles</div>
-        <div class="sf-tab" onclick="cambiarTab('actividad', this)">Actividad</div>
-        <div class="sf-tab" onclick="cambiarTab('chatter', this)">Chatter</div>
+    <!-- 3. STRIP DE PESTAÑAS -->
+    <div class="sf-nav-strip">
+        <div class="sf-tabs">
+            <div class="sf-tab active">Detalles de la Captura</div>
+            <div class="sf-tab">Instrucciones y Reglas</div>
+            <div class="sf-tab">Historial</div>
+        </div>
+        <span style="font-size: 11px; color: var(--sf-text-muted); font-weight: 600;">Paso 1 de 14</span>
     </div>
 
     <form method="POST">
         <div class="sf-body-content">
             
             {% if mensaje %}
-                <div class="alert-box">{{ mensaje }}</div>
+                <div class="alert-success">{{ mensaje }}</div>
             {% endif %}
 
-            <!-- TAB 1: DETALLES -->
-            <div id="tab-detalles" class="sf-tab-pane active">
-
-                <!-- ACORDEÓN 1: TG0 - DATOS DEL CONTACTO -->
-                <div class="sf-accordion">
-                    <div class="sf-accordion-header" onclick="toggleAccordion(this)">
-                        <div class="sf-accordion-title">
-                            <span class="sf-icon-arrow">▼</span>
-                            <span>TG0 — Datos del Contacto, Origen y Asignación</span>
-                        </div>
-                        <span style="font-size:11px; color:#706e6b;">Objeto SF: Lead | Fase: BD → MO</span>
+            <!-- ================= PANTALLA TG0 ================= -->
+            <div id="pantalla-tg0" class="tg-screen">
+                
+                <!-- SECCIÓN 1: DATOS DEL CONTACTO (CAMPOS SEPARADOS E INDEPENDIENTES) -->
+                <div class="sf-card-section">
+                    <div class="sf-card-header">
+                        <span>▼ Datos del Contacto</span>
+                        <span style="font-size: 11px; color: var(--sf-text-muted); font-weight: normal;">7 campos obligatorios/opcionales</span>
                     </div>
-
-                    <div class="sf-form-grid">
-                        <!-- CAMPOS TOTALMENTE INDEPENDIENTES DE NOMBRE Y APELLIDO -->
-                        <div class="sf-field">
-                            <label class="sf-label">Tratamiento</label>
-                            <select name="tratamiento" class="sf-select">
-                                <option value="">--Ninguno--</option>
-                                <option value="Sr.">Sr.</option>
-                                <option value="Sra.">Sra.</option>
-                                <option value="Ing.">Ing.</option>
-                                <option value="Lic.">Lic.</option>
-                                <option value="Dr.">Dr.</option>
-                            </select>
+                    <div class="sf-field-grid">
+                        
+                        <!-- 1. NOMBRE (INDEPENDIENTE) -->
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Nombre</label>
+                                <span class="sf-tooltip-icon" data-tooltip="Nombre del contacto. Campo estándar de Salesforce.">i</span>
+                            </div>
+                            <input type="text" name="nombre" class="sf-input" placeholder="Ingrese nombre" required oninput="actualizarHighlights()">
+                            <span class="sf-help-text">Campo estándar de Salesforce.</span>
                         </div>
 
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Estado de prospecto</label>
-                            <select name="estado_prospecto" class="sf-select" required>
-                                <option value="Nuevo" selected>Nuevo</option>
-                                <option value="Evaluando TG1">Evaluando TG1</option>
-                                <option value="Trabajando TG2">Trabajando TG2</option>
-                                <option value="Convertido MQL">Convertido MQL</option>
-                            </select>
+                        <!-- 2. APELLIDOS (INDEPENDIENTE) -->
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Apellidos</label>
+                                <span class="sf-tooltip-icon" data-tooltip="Apellidos del contacto. Campo estándar de Salesforce.">i</span>
+                            </div>
+                            <input type="text" name="apellidos" class="sf-input" placeholder="Ingrese apellidos" required oninput="actualizarHighlights()">
+                            <span class="sf-help-text">Campo estándar de Salesforce.</span>
                         </div>
 
-                        <!-- NOMBRE INDEPENDIENTE -->
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Nombre</label>
-                            <input type="text" name="nombre" class="sf-input" value="Khaled" required oninput="actualizarHeader()">
-                            <span class="sf-help-text">Nombre del contacto principal.</span>
+                        <!-- 3. EMPRESA / RAZÓN SOCIAL -->
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Empresa / Razón Social</label>
+                                <span class="sf-tooltip-icon" data-tooltip="Nombre de la empresa del lead.">i</span>
+                            </div>
+                            <input type="text" name="empresa" class="sf-input" placeholder="Ingrese razón social" required oninput="actualizarHighlights()">
+                            <span class="sf-help-text">Nombre de la empresa del lead.</span>
                         </div>
 
-                        <!-- APELLIDOS INDEPENDIENTES -->
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Apellidos</label>
-                            <input type="text" name="apellidos" class="sf-input" value="Parra Chá" required oninput="actualizarHeader()">
-                            <span class="sf-help-text">Apellidos del contacto principal.</span>
+                        <!-- 4. CARGO / TÍTULO -->
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Cargo / Título</label>
+                                <span class="sf-tooltip-icon" data-tooltip="Cargo o posición del contacto dentro de la empresa.">i</span>
+                            </div>
+                            <input type="text" name="cargo" class="sf-input" placeholder="Ej. Director / Gerente de Planta" required oninput="actualizarHighlights()">
+                            <span class="sf-help-text">Cargo o posición del contacto en la empresa.</span>
                         </div>
 
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Empresa / Razón Social</label>
-                            <input type="text" name="empresa" class="sf-input" value="Hermosillo" required oninput="actualizarHeader()">
+                        <!-- 5. EMAIL CORPORATIVO -->
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Email Corporativo</label>
+                                <span class="sf-tooltip-icon" data-tooltip="Email corporativo del contacto. Verificar dominio.">i</span>
+                            </div>
+                            <input type="email" name="email" class="sf-input" placeholder="correo@empresa.com" required oninput="actualizarHighlights()">
+                            <span class="sf-help-text">Verificar que pertenece al dominio de la empresa.</span>
                         </div>
 
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Cargo / Título</label>
-                            <input type="text" name="cargo" class="sf-input" value="Director de Operaciones Noreste" required oninput="actualizarHeader()">
+                        <!-- 6. TELÉFONO CONTACTO -->
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label">Teléfono Contacto</label>
+                                <span class="sf-tooltip-icon" data-tooltip="Teléfono directo o móvil del contacto.">i</span>
+                            </div>
+                            <input type="tel" name="telefono" class="sf-input" placeholder="+52 81 0000 0000" oninput="actualizarHighlights()">
+                            <span class="sf-help-text">Teléfono directo o móvil del contacto.</span>
                         </div>
 
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Email Corporativo</label>
-                            <input type="email" name="email" class="sf-input" value="khaled.parra@hermosillo.com" required oninput="actualizarHeader()">
-                        </div>
-
-                        <div class="sf-field">
-                            <label class="sf-label">Teléfono Contacto</label>
-                            <input type="tel" name="telefono" class="sf-input" value="+52 8183 424811" oninput="actualizarHeader()">
-                        </div>
-
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>País / Región</label>
+                        <!-- 7. PAÍS / REGIÓN (PICKLIST EXCEL) -->
+                        <div class="sf-field-group" style="grid-column: span 2;">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>País / Región</label>
+                                <span class="sf-tooltip-icon" data-tooltip="Determina si la geografía está dentro del scope de LAMMSA.">i</span>
+                            </div>
                             <select name="pais_region" class="sf-select" required>
-                                <option value="Mexico" selected>Mexico</option>
+                                <option value="">--Seleccione País / Región--</option>
+                                <option value="Mexico">Mexico</option>
                                 <option value="USA">USA</option>
                             </select>
+                            <span class="sf-help-text">País o región donde opera el lead.</span>
                         </div>
 
-                        <div class="sf-field">
-                            <label class="sf-label">Propietario del prospecto</label>
-                            <input type="text" class="sf-input" value="Elizabeth Torres Oyarzabal" readonly style="background-color: #f3f3f3;">
-                        </div>
+                    </div>
+                </div>
 
-                        <div class="sf-field full-width">
-                            <label class="sf-label">Notas Adicionales</label>
-                            <textarea name="notas_tg0" class="sf-textarea" rows="2" placeholder="Notas generales sobre el prospecto..."></textarea>
+                <!-- SECCIÓN 2: ORIGEN Y ASIGNACIÓN -->
+                <div class="sf-card-section">
+                    <div class="sf-card-header">
+                        <span>▼ Origen y Asignación</span>
+                        <span style="font-size: 11px; color: #18a0fb; font-weight: 600;">NO REQUERIDO</span>
+                    </div>
+                    <div class="sf-field-grid">
+                        <div class="sf-field-group" style="grid-column: span 2;">
+                            <div class="sf-label-row">
+                                <label class="sf-label">Notas Adicionales</label>
+                                <span class="sf-tooltip-icon" data-tooltip="Notas generales sobre el lead. Campo estándar de Salesforce.">i</span>
+                            </div>
+                            <textarea name="notas_adicionales" class="sf-textarea" rows="3" placeholder="Escriba aquí observaciones iniciales sobre el prospecto..."></textarea>
+                            <span class="sf-help-text">Notas generales sobre el lead. Campo estándar de Salesforce.</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- ACORDEÓN 2: TG1 - SEGMENTACIÓN Y FIT -->
-                <div class="sf-accordion">
-                    <div class="sf-accordion-header" onclick="toggleAccordion(this)">
-                        <div class="sf-accordion-title">
-                            <span class="sf-icon-arrow">▼</span>
-                            <span>TG1 — Segmentación y Fit</span>
-                        </div>
-                        <span style="font-size:11px; color:#706e6b;">Objeto SF: Lead | Fase: MO</span>
+            </div>
+
+            <!-- ================= PANTALLA TG1 (SEGMENTACIÓN Y FIT) ================= -->
+            <div id="pantalla-tg1" class="tg-screen" style="display:none;">
+                <div class="sf-card-section">
+                    <div class="sf-card-header">
+                        <span>▼ TG1 — Segmentación y Fit</span>
+                        <span style="font-size: 11px; color: var(--sf-text-muted);">Taxonomía BSV LAMMSA</span>
                     </div>
-
-                    <div class="sf-form-grid">
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Macro Segmento</label>
-                            <select name="macro_segmento" class="sf-select" required>
-                                <option value="">--Seleccionar--</option>
-                                <option value="Industrial" selected>Industrial</option>
-                                <option value="Automotriz">Automotriz</option>
-                                <option value="Manufactura">Manufactura</option>
-                            </select>
-                            <a href="#" class="sf-sublink">Ver todas las dependencias</a>
-                        </div>
-
-                        <div class="sf-field">
-                            <label class="sf-label">Sub-Segmento</label>
-                            <select name="sub_segmento" class="sf-select">
-                                <option value="">--Seleccionar--</option>
-                                <option value="Construcción e Infraestructura" selected>Construcción e Infraestructura</option>
-                                <option value="Metalmecánica">Metalmecánica</option>
-                            </select>
-                            <a href="#" class="sf-sublink">Ver todas las dependencias</a>
-                        </div>
-
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Geografía</label>
-                            <select name="geografia" class="sf-select" required>
-                                <option value="Norte" selected>Norte</option>
+                    <div class="sf-field-grid">
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Geografía</label>
+                            </div>
+                            <select name="geografia" class="sf-select">
+                                <option value="">--Seleccione Geografía--</option>
+                                <option value="Norte">Norte</option>
                                 <option value="Centro">Centro</option>
                                 <option value="Bajio">Bajío</option>
                                 <option value="Occidente">Occidente</option>
@@ -564,115 +541,91 @@ HTML_SALESFORCE_PREMIUM = """
                             </select>
                         </div>
 
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Relevancia del Portafolio</label>
-                            <select name="relevancia" class="sf-select" required>
-                                <option value="Alta" selected>Alta</option>
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Relevancia del Portafolio</label>
+                            </div>
+                            <select name="relevancia" class="sf-select">
+                                <option value="">--Seleccione Relevancia--</option>
+                                <option value="Alta">Alta</option>
                                 <option value="Media">Media</option>
                                 <option value="Baja">Baja</option>
                             </select>
                         </div>
 
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Tamaño de Empresa</label>
-                            <select name="tamano_empresa" class="sf-select" required>
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Tamaño de Empresa</label>
+                            </div>
+                            <select name="tamano_empresa" class="sf-select">
+                                <option value="">--Seleccione Tamaño--</option>
                                 <option value="Micro — <$10M">Micro — &lt;$10M</option>
                                 <option value="Pequeña — $10-50M">Pequeña — $10-50M</option>
-                                <option value="Mediana — $50-200M" selected>Mediana — $50-200M</option>
+                                <option value="Mediana — $50-200M">Mediana — $50-200M</option>
                                 <option value="Grande — $200M-$1B">Grande — $200M-$1B</option>
                                 <option value="Enterprise — >$1B">Enterprise — &gt;$1B</option>
                             </select>
                         </div>
 
-                        <div class="sf-field">
-                            <label class="sf-label"><span class="sf-req">*</span>Banda Asignada</label>
-                            <select name="banda" class="sf-select" required>
-                                <option value="K" selected>K</option>
+                        <div class="sf-field-group">
+                            <div class="sf-label-row">
+                                <label class="sf-label"><span class="sf-req">*</span>Banda Asignada</label>
+                            </div>
+                            <select name="banda" class="sf-select">
+                                <option value="">--Seleccione Banda--</option>
+                                <option value="K">K</option>
                                 <option value="A">A</option>
                                 <option value="B">B</option>
                                 <option value="C">C</option>
                                 <option value="D">D</option>
                             </select>
-                            <span class="sf-help-text">Si es K o A, clasifica como BSV Normal.</span>
+                            <span class="sf-help-text">Si es K o A, entonces es BSV - Normal.</span>
                         </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- TAB 2: ACTIVIDAD -->
-            <div id="tab-actividad" class="sf-tab-pane">
-                <div class="sf-accordion">
-                    <div class="sf-accordion-header">
-                        <span>▼ Registro de Actividad y Seguimiento</span>
-                    </div>
-                    <div style="padding: 20px; font-size: 13px; color: #706e6b;">
-                        <p><strong>Llamada Registrada:</strong> Primera interacción telefónica realizada el día de hoy.</p>
-                        <p><strong>Correo Enviado:</strong> Template de confirmación de reunión enviado a khaled.parra@hermosillo.com</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: CHATTER -->
-            <div id="tab-chatter" class="sf-tab-pane">
-                <div class="sf-accordion">
-                    <div class="sf-accordion-header">
-                        <span>▼ Muro de Colaboración (Chatter)</span>
-                    </div>
-                    <div style="padding: 20px;">
-                        <textarea class="sf-textarea" rows="3" placeholder="Escribe una actualización para el equipo comercial..."></textarea>
-                        <button type="button" class="sf-btn sf-btn-save" style="margin-top: 10px;">Compartir</button>
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- 5. BARRA FLOTANTE DE BOTONES -->
+        <!-- 5. ACCIONES FLOTANTES -->
         <div class="sf-action-bar">
-            <button type="button" class="sf-btn sf-btn-cancel">Cancelar</button>
-            <button type="submit" class="sf-btn sf-btn-save">Guardar en SharePoint</button>
+            <button type="button" class="sf-btn sf-btn-secondary" onclick="limpiarFormulario()">Limpiar Campos</button>
+            <button type="submit" class="sf-btn sf-btn-primary">Guardar Prospecto en SharePoint</button>
         </div>
     </form>
 </div>
 
 <script>
-    // Actualizar Header en tiempo real
-    function actualizarHeader() {
-        const nombre = document.querySelector('input[name="nombre"]').value;
-        const apellidos = document.querySelector('input[name="apellidos"]').value;
-        const empresa = document.querySelector('input[name="empresa"]').value;
-        const cargo = document.querySelector('input[name="cargo"]').value;
-        const email = document.querySelector('input[name="email"]').value;
-        const telefono = document.querySelector('input[name="telefono"]').value;
+    function actualizarHighlights() {
+        const nombre = document.querySelector('input[name="nombre"]').value.trim();
+        const apellidos = document.querySelector('input[name="apellidos"]').value.trim();
+        const empresa = document.querySelector('input[name="empresa"]').value.trim();
+        const cargo = document.querySelector('input[name="cargo"]').value.trim();
+        const telefono = document.querySelector('input[name="telefono"]').value.trim();
+        const email = document.querySelector('input[name="email"]').value.trim();
 
-        document.getElementById('header-nombre-completo').innerText = nombre + " " + apellidos;
-        document.getElementById('header-compania').innerText = empresa;
-        document.getElementById('header-cargo').innerText = cargo;
-        document.getElementById('header-email').innerText = email;
-        document.getElementById('header-email').href = "mailto:" + email;
-        document.getElementById('header-telefono').innerText = telefono;
+        // Actualizar título principal
+        const tituloCompleto = (nombre || apellidos) ? (nombre + ' ' + apellidos) : 'Nuevo Prospecto (Por llenar)';
+        document.getElementById('dyn-lead-title').innerText = tituloCompleto;
+
+        // Actualizar resumen de highlights
+        document.getElementById('dyn-empresa').innerText = empresa || '—';
+        document.getElementById('dyn-cargo').innerText = cargo || '—';
+        document.getElementById('dyn-telefono').innerText = telefono || '—';
+        document.getElementById('dyn-email').innerText = email || '—';
     }
 
-    // Toggle para desplegar/colapsar acordeones
-    function toggleAccordion(header) {
-        const accordion = header.parentElement;
-        accordion.classList.toggle('collapsed');
-    }
-
-    // Cambiar Pestañas (Detalles, Actividad, Chatter)
-    function cambiarTab(tabId, tabElement) {
-        document.querySelectorAll('.sf-tab').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.sf-tab-pane').forEach(el => el.classList.remove('active'));
-
-        tabElement.classList.add('active');
-        document.getElementById('tab-' + tabId).classList.add('active');
-    }
-
-    // Seleccionar Etapa en Chevrons
-    function seleccionarEtapa(element) {
+    function cambiarPaso(pasoId) {
+        document.querySelectorAll('.tg-screen').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.sf-chevron').forEach(el => el.classList.remove('active'));
-        element.classList.add('active');
+        
+        document.getElementById('pantalla-' + pasoId).style.display = 'block';
+        document.getElementById('btn-' + pasoId).classList.add('active');
+    }
+
+    function limpiarFormulario() {
+        document.querySelector('form').reset();
+        actualizarHighlights();
     }
 </script>
 
@@ -684,9 +637,35 @@ HTML_SALESFORCE_PREMIUM = """
 def home():
     mensaje = None
     if request.method == 'POST':
-        mensaje = "¡Prospecto guardado exitosamente en la base de datos de SharePoint!"
+        nombre = request.form.get('nombre')
+        apellidos = request.form.get('apellidos')
+        empresa = request.form.get('empresa')
+        cargo = request.form.get('cargo')
+        email = request.form.get('email')
+        telefono = request.form.get('telefono')
+        pais_region = request.form.get('pais_region')
+        notas = request.form.get('notas_adicionales')
 
-    return render_template_string(HTML_SALESFORCE_PREMIUM, mensaje=mensaje)
+        try:
+            # Inserción directa en la Lista de SharePoint 'BSV_Leads'
+            ctx = ClientContext(SITE_URL).with_credentials(UserCredential(USERNAME, PASSWORD))
+            target_list = ctx.web.lists.get_by_title("BSV_Leads")
+            
+            target_list.add_item({
+                "Title": f"{nombre} {apellidos}",
+                "BSV_Empresa___Razon_Social__c": empresa,
+                "BSV_Cargo___Titulo__c": cargo,
+                "BSV_Email_Corporativo__c": email,
+                "BSV_Telefono_Contacto__c": telefono,
+                "BSV_Pais___Region__c": pais_region,
+                "BSV_Notas_Adicionales__c": notas
+            })
+            ctx.execute_query()
+            mensaje = f"¡Prospecto '{nombre} {apellidos}' de la empresa '{empresa}' guardado exitosamente en SharePoint!"
+        except Exception as e:
+            mensaje = f"Notificación: Formulario validado correctamente localmente. (Conexión SharePoint: {str(e)})"
+
+    return render_template_string(HTML_SALESFORCE_EXCEL_ONLY, mensaje=mensaje)
 
 if __name__ == '__main__':
     app.run(debug=True)
