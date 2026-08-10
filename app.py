@@ -1,4 +1,3 @@
-import os
 import json
 from flask import Flask, request, render_template_string
 
@@ -9,78 +8,331 @@ SITE_URL = "https://tu-empresa.sharepoint.com/sites/tu-sitio"
 USERNAME = "usuario@tu-empresa.com"
 PASSWORD = "TuPassword123"
 
-EXCEL_FILE = 'LAMMSA_BSV_Tollgates_Prototipo_Excel.xlsx'
+# --- MATRIZ COMPLETA DE TOLLGATES (TG0 A TG13) EMBEBIDA ---
+TOLLGATES_DATA = {
+  "TG0": {
+    "objeto": "Lead",
+    "fase": "BD → MO",
+    "secciones": [
+      {
+        "nombre": "Datos del Contacto",
+        "campos": [
+          {"id": "nombre", "campo": "Nombre", "tipo": "Texto", "req": True, "ayuda": "Nombre del contacto. Campo estándar de Salesforce.", "notas": "", "opts": []},
+          {"id": "apellidos", "campo": "Apellidos", "tipo": "Texto", "req": True, "ayuda": "Apellidos del contacto. Campo estándar de Salesforce.", "notas": "", "opts": []},
+          {"id": "empresa", "campo": "Empresa / Razón Social", "tipo": "Texto", "req": True, "ayuda": "Nombre de la empresa del lead.", "notas": "", "opts": []},
+          {"id": "cargo", "campo": "Cargo / Título", "tipo": "Texto", "req": True, "ayuda": "Cargo o posición del contacto dentro de la empresa.", "notas": "", "opts": []},
+          {"id": "email", "campo": "Email Corporativo", "tipo": "Email", "req": True, "ayuda": "Email corporativo del contacto. Verificar dominio.", "notas": "", "opts": []},
+          {"id": "telefono", "campo": "Teléfono Contacto", "tipo": "Teléfono", "req": False, "ayuda": "Teléfono directo o móvil del contacto.", "notas": "", "opts": []},
+          {"id": "field_tg0_pais___region", "campo": "País / Región", "tipo": "Lista (picklist)", "req": True, "ayuda": "País o región donde opera el lead.", "notas": "", "opts": ["Mexico", "USA"]}
+        ]
+      },
+      {
+        "nombre": "Origen y Asignación",
+        "campos": [
+          {"id": "field_tg0_notas_adicionales", "campo": "Notas Adicionales", "tipo": "Texto largo", "req": False, "ayuda": "Notas generales sobre el lead.", "notas": "NO REQUERIDO", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG1": {
+    "objeto": "Lead",
+    "fase": "MO",
+    "secciones": [
+      {
+        "nombre": "Segmentación y Fit",
+        "campos": [
+          {"id": "field_tg1_macro_segmento", "campo": "Macro Segmento", "tipo": "Lista (picklist)", "req": True, "ayuda": "Macro segmento al que pertenece el lead.", "notas": "", "opts": ["Industrial", "Automotriz", "Alimentos y Bebidas", "Farmacéutica"]},
+          {"id": "field_tg1_sub_segmento", "campo": "Sub-Segmento", "tipo": "Lista (picklist)", "req": False, "ayuda": "Sub-segmento específico.", "notas": "", "opts": ["Manufactura", "Empaque", "Ensamblaje"]},
+          {"id": "field_tg1_geografia", "campo": "Geografía", "tipo": "Lista (picklist)", "req": True, "ayuda": "Región geográfica donde opera el cliente.", "notas": "", "opts": ["Norte", "Centro", "Bajio", "Occidente", "Golfo"]},
+          {"id": "field_tg1_relevancia_del_portafolio", "campo": "Relevancia del Portafolio", "tipo": "Lista (picklist)", "req": True, "ayuda": "Nivel de relevancia del portafolio.", "notas": "", "opts": ["Alta", "Media", "Baja"]},
+          {"id": "field_tg1_tamano_de_empresa", "campo": "Tamaño de Empresa", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estimación del tamaño por ventas anuales.", "notas": "", "opts": ["Micro — <$10M", "Pequeña — $10-50M", "Mediana — $50-200M", "Grande — $200M-$1B", "Enterprise — >$1B"]},
+          {"id": "field_tg1_banda_asignada", "campo": "Banda Asignada", "tipo": "Lista (picklist)", "req": True, "ayuda": "Banda de clasificación BSV del cliente.", "notas": "si es K o A, entonces es BSV - Normal", "opts": ["K", "A", "B", "C", "D"]}
+        ]
+      }
+    ]
+  },
+  "TG2": {
+    "objeto": "Lead",
+    "fase": "MO",
+    "secciones": [
+      {
+        "nombre": "Engagement y Señales",
+        "campos": [
+          {"id": "field_tg2_rol_del_contacto", "campo": "Rol del Contacto", "tipo": "Lista (picklist)", "req": True, "ayuda": "Rol del contacto en el proceso de decisión.", "notas": "", "opts": ["Decision Maker", "Influencer", "Evaluador técnico", "Usuario final", "Desconocido"]}
+        ]
+      },
+      {
+        "nombre": "Enriquecimiento",
+        "campos": [
+          {"id": "field_tg2_numero_de_plantas___ubicaciones", "campo": "Número de Plantas / Ubicaciones", "tipo": "Número", "req": False, "ayuda": "Número estimado de plantas operativas.", "notas": "", "opts": []},
+          {"id": "field_tg2_contactos_adicionales_identificados", "campo": "Contactos Adicionales Identificados", "tipo": "Texto largo", "req": False, "ayuda": "Nombre, cargo y email de contactos adicionales.", "notas": "", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG3": {
+    "objeto": "Lead",
+    "fase": "MO",
+    "secciones": [
+      {
+        "nombre": "Conversión MQL",
+        "campos": [
+          {"id": "field_tg3_codigo_xz", "campo": "Código XZ", "tipo": "Lista (picklist)", "req": True, "ayuda": "Código de clasificación de producto XZ.", "notas": "Consumo", "opts": ["Directo, Indirecto"]}
+        ]
+      },
+      {
+        "nombre": "Notas de Transferencia",
+        "campos": [
+          {"id": "field_tg3_puntos_de_interes_detectados", "campo": "Puntos de Interés Detectados", "tipo": "Texto largo", "req": True, "ayuda": "Hipótesis de necesidades o pain points.", "notas": "", "opts": []},
+          {"id": "field_tg3_calidad_del_contacto", "campo": "Calidad del Contacto", "tipo": "Lista (picklist)", "req": True, "ayuda": "Evaluación subjetiva de la calidad del contacto.", "notas": "", "opts": ["Alta", "Media", "Baja"]},
+          {"id": "field_tg3_comentarios_adicionales_para_ventas", "campo": "Comentarios Adicionales para Ventas", "tipo": "Texto largo", "req": False, "ayuda": "Notas adicionales de Marketing para Ventas.", "notas": "", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG4": {
+    "objeto": "Lead",
+    "fase": "MO → WO",
+    "secciones": [
+      {
+        "nombre": "Validación ERP",
+        "campos": [
+          {"id": "field_tg4_ventas_ultimos_12_meses", "campo": "Ventas Últimos 12 Meses", "tipo": "Lista (picklist)", "req": True, "ayuda": "Rango de ventas de los últimos 12 meses.", "notas": "", "opts": ["Sin historial", "$0", "<$20k"]},
+          {"id": "field_tg4_actividad_lammsa_previa", "campo": "Actividad Lammsa Previa", "tipo": "Lista (picklist)", "req": True, "ayuda": "Indica si tiene historial con productos Sommer.", "notas": "", "opts": ["Nunca ha comprado", "Histórico inactivo", "Activo — producto Sommer"]}
+        ]
+      },
+      {
+        "nombre": "Clasificación Comercial",
+        "campos": [
+          {"id": "field_tg4_clasificacion_comercial", "campo": "Clasificación Comercial", "tipo": "Lista (picklist)", "req": True, "ayuda": "Clasificación comercial del lead.", "notas": "", "opts": ["K, A, B, C, D"]},
+          {"id": "field_tg4_justificacion_de_clasificacion", "campo": "Justificación de Clasificación", "tipo": "Texto largo", "req": True, "ayuda": "Evidencia de la lógica aplicada.", "notas": "", "opts": []}
+        ]
+      },
+      {
+        "nombre": "Asignación y SLA",
+        "campos": [
+          {"id": "field_tg4_osp_asignado", "campo": "OSP Asignado", "tipo": "Texto", "req": True, "ayuda": "Nombre del OSP que recibe la cuenta.", "notas": "", "opts": []},
+          {"id": "field_tg4_gerente_de_area", "campo": "Gerente de Área", "tipo": "Texto", "req": True, "ayuda": "Nombre del Gerente responsable.", "notas": "", "opts": []},
+          {"id": "field_tg4_fecha_de_asignacion", "campo": "Fecha de Asignación", "tipo": "Fecha", "req": True, "ayuda": "Fecha de asignación formal.", "notas": "", "opts": []},
+          {"id": "field_tg4_fecha_compromiso_1ra_interaccion", "campo": "Fecha Compromiso 1ra Interacción", "tipo": "Fecha", "req": True, "ayuda": "Fecha comprometida para primera interacción (<=5 días).", "notas": "Convierte a cuenta - Cita validada", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG5": {
+    "objeto": "Opportunity",
+    "fase": "WO",
+    "secciones": [
+      {
+        "nombre": "Datos de la WO",
+        "campos": [
+          {"id": "field_tg5_tipo_de_oportunidad", "campo": "Tipo de Oportunidad", "tipo": "Lista (picklist)", "req": True, "ayuda": "Clasificación comercial de la oportunidad.", "notas": "", "opts": ["XR — Reactivaciíon", "XP — Prospecto", "XS — Cross Sell Sommer"]},
+          {"id": "field_tg5_aoi_estimado_pct", "campo": "AOI Estimado (%)", "tipo": "Porcentaje (%)", "req": True, "ayuda": "Porcentaje de ahorro o ingreso estimado.", "notas": "", "opts": []},
+          {"id": "field_tg5_primera_interaccion_completada", "campo": "Primera Interacción Completada", "tipo": "Lista (picklist)", "req": True, "ayuda": "Indica si se completó la primera interacción.", "notas": "Enviar Template de Agradecimiento", "opts": ["Sí", "No — pendiente"]},
+          {"id": "field_tg5_fecha_de_primera_interaccion", "campo": "Fecha de Primera Interacción", "tipo": "Fecha", "req": False, "ayuda": "Fecha real de la primera interacción.", "notas": "", "opts": []},
+          {"id": "field_tg5_formato_de_primera_interaccion", "campo": "Formato de Primera Interacción", "tipo": "Lista (picklist)", "req": False, "ayuda": "Canal o formato utilizado.", "notas": "", "opts": ["Presencial — planta", "Presencial — oficina", "Virtual"]}
+        ]
+      },
+      {
+        "nombre": "Plan BSV",
+        "campos": [
+          {"id": "field_tg5_estado_del_plan_bsv", "campo": "Estado del Plan BSV", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estado del Plan BSV para la oportunidad.", "notas": "", "opts": ["Sí — completado", "En proceso", "No — pendiente"]}
+        ]
+      }
+    ]
+  },
+  "TG6": {
+    "objeto": "Opportunity",
+    "fase": "WO",
+    "secciones": [
+      {
+        "nombre": "Plan BSV",
+        "campos": [
+          {"id": "field_tg6_fecha_estimada_presentacion_plan_bsv", "campo": "Fecha Estimada Presentación Plan BSV", "tipo": "Fecha", "req": False, "ayuda": "Fecha estimada para presentar el Plan BSV.", "notas": "", "opts": []},
+          {"id": "field_tg6_notas_del_plan_bsv", "campo": "Notas del Plan BSV", "tipo": "Texto largo", "req": False, "ayuda": "Consideraciones iniciales del Plan BSV.", "notas": "", "opts": []}
+        ]
+      },
+      {
+        "nombre": "Decisión GO / NO-GO",
+        "campos": [
+          {"id": "field_tg6_decision_go___no_go", "campo": "Decisión GO / NO-GO", "tipo": "Lista (picklist)", "req": True, "ayuda": "Decisión formal de continuidad en el funnel.", "notas": "Flujo de Aprobación Gerencia", "opts": ["GO — continuar con investigación BSV", "NO-GO — salida", "TICKLER — re-evaluar en fecha futura"]},
+          {"id": "field_tg6_justificacion_de_la_decision", "campo": "Justificación de la Decisión", "tipo": "Texto largo", "req": True, "ayuda": "Justificación obligatoria.", "notas": "", "opts": []},
+          {"id": "field_tg6_siguiente_paso_concreto", "campo": "Siguiente Paso Concreto", "tipo": "Texto", "req": True, "ayuda": "Siguiente acción específica.", "notas": "", "opts": []},
+          {"id": "field_tg6_fecha_del_siguiente_paso", "campo": "Fecha del Siguiente Paso", "tipo": "Fecha", "req": True, "ayuda": "Fecha comprometida para el siguiente paso.", "notas": "", "opts": []}
+        ]
+      },
+      {
+        "nombre": "MEDDICC",
+        "campos": [
+          {"id": "field_tg6_meddicc_i_—_score_dolor_implicado", "campo": "MEDDICC I — Score (Dolor Implicado)", "tipo": "Número", "req": True, "ayuda": "Score Implicated Pain (Escala 1-10). Gate: >=4.", "notas": "", "opts": []},
+          {"id": "field_tg6_meddicc_i_—_evidencia_y_notas", "campo": "MEDDICC I — Evidencia y Notas", "tipo": "Texto largo", "req": True, "ayuda": "Descripción del dolor y costo de inacción.", "notas": "", "opts": []},
+          {"id": "field_tg6_meddicc_m_—_score_metricas", "campo": "MEDDICC M — Score (Métricas)", "tipo": "Número", "req": True, "ayuda": "Score Metrics (Escala 1-10). Gate: >=5.", "notas": "", "opts": []},
+          {"id": "field_tg6_meddicc_m_—_evidencia_y_notas", "campo": "MEDDICC M — Evidencia y Notas", "tipo": "Texto largo", "req": True, "ayuda": "Métricas cuantificadas de impacto.", "notas": "", "opts": []},
+          {"id": "field_tg6_meddicc_c2_—_score_competencia", "campo": "MEDDICC C2 — Score (Competencia)", "tipo": "Número", "req": True, "ayuda": "Score Competition (Escala 1-10).", "notas": "", "opts": []},
+          {"id": "field_tg6_meddicc_c2_—_evidencia_y_notas", "campo": "MEDDICC C2 — Evidencia y Notas", "tipo": "Texto largo", "req": True, "ayuda": "Proveedor actual y ventajas de LAMMSA.", "notas": "", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG7": {
+    "objeto": "Opportunity",
+    "fase": "WO",
+    "secciones": [
+      {
+        "nombre": "MEDDICC",
+        "campos": [
+          {"id": "field_tg7_meddicc_c1_—_score_campeon", "campo": "MEDDICC C1 — Score (Campeón)", "tipo": "Número", "req": True, "ayuda": "Score Champion (Escala 1-10).", "notas": "Agregar en contacto", "opts": []},
+          {"id": "field_tg7_meddicc_c1_—_evidencia_y_notas", "campo": "MEDDICC C1 — Evidencia y Notas", "tipo": "Texto largo", "req": True, "ayuda": "Nombre del Campeón y evidencia de advocacy.", "notas": "Requiere interacción previa", "opts": []},
+          {"id": "field_tg7_meddicc_d1_—_score_criterios_de_decision", "campo": "MEDDICC D1 — Score (Criterios de Decisión)", "tipo": "Número", "req": True, "ayuda": "Score Decision Criteria (Escala 1-10).", "notas": "", "opts": []},
+          {"id": "field_tg7_meddicc_d1_—_evidencia_y_notas", "campo": "MEDDICC D1 — Evidencia y Notas", "tipo": "Texto largo", "req": True, "ayuda": "Criterios con los que el cliente evaluará.", "notas": "", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG8": {
+    "objeto": "Opportunity",
+    "fase": "WO",
+    "secciones": [
+      {
+        "nombre": "MEDDICC",
+        "campos": [
+          {"id": "field_tg8_meddicc_e_—_score_comprador_economico", "campo": "MEDDICC E — Score (Comprador Económico)", "tipo": "Número", "req": True, "ayuda": "Score Economic Buyer (Escala 1-10).", "notas": "Agregar en contacto", "opts": []},
+          {"id": "field_tg8_meddicc_e_—_evidencia_y_notas", "campo": "MEDDICC E — Evidencia y Notas", "tipo": "Texto largo", "req": True, "ayuda": "Nombre y nivel de soporte del Economic Buyer.", "notas": "Requiere interacción previa", "opts": []},
+          {"id": "field_tg8_meddicc_d2_—_score_proceso_de_decision", "campo": "MEDDICC D2 — Score (Proceso de Decisión)", "tipo": "Número", "req": True, "ayuda": "Score Decision Process (Escala 1-10).", "notas": "", "opts": []},
+          {"id": "field_tg8_meddicc_d2_—_evidencia_y_notas", "campo": "MEDDICC D2 — Evidencia y Notas", "tipo": "Texto largo", "req": True, "ayuda": "Pasos del proceso de decisión y timeline.", "notas": "", "opts": []},
+          {"id": "field_tg8_meddicc_p_—_score_proceso_de_contratacion", "campo": "MEDDICC P — Score (Proceso de Contratación)", "tipo": "Número", "req": True, "ayuda": "Score Paper Process (Escala 1-10).", "notas": "", "opts": []},
+          {"id": "field_tg8_meddicc_p_—_evidencia_y_notas", "campo": "MEDDICC P — Evidencia y Notas", "tipo": "Texto largo", "req": True, "ayuda": "Pasos de revisión legal y firmas.", "notas": "", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG9": {
+    "objeto": "Opportunity",
+    "fase": "WO",
+    "secciones": [
+      {
+        "nombre": "Investigación BSV",
+        "campos": [
+          {"id": "field_tg9_resumen_ejecutivo_bsv", "campo": "Resumen Ejecutivo BSV", "tipo": "Texto largo", "req": True, "ayuda": "Resumen de la situación y propuesta.", "notas": "", "opts": []},
+          {"id": "field_tg9_mapa_de_stakeholders_y_coaches", "campo": "Mapa de Stakeholders y Coaches", "tipo": "Texto largo", "req": True, "ayuda": "Mapa de actores clave y nivel de apoyo.", "notas": "", "opts": []},
+          {"id": "field_tg9_hipotesis_de_fit_de_negocio", "campo": "Hipótesis de Fit de Negocio", "tipo": "Texto largo", "req": True, "ayuda": "Cómo LAMMSA resuelve el problema.", "notas": "", "opts": []},
+          {"id": "field_tg9_aoi_cuantificado_usd", "campo": "AOI Cuantificado ($)", "tipo": "Moneda ($)", "req": True, "ayuda": "Valor en dólares del AOI.", "notas": "", "opts": []},
+          {"id": "field_tg9_analisis_de_incumbentes", "campo": "Análisis de Incumbentes", "tipo": "Texto largo", "req": True, "ayuda": "Análisis de competidores actuales.", "notas": "", "opts": []},
+          {"id": "field_tg9_posicionamiento_diferenciador_lammsa", "campo": "Posicionamiento Diferenciador LAMMSA", "tipo": "Texto largo", "req": True, "ayuda": "Argumento diferenciador de LAMMSA.", "notas": "", "opts": []}
+        ]
+      },
+      {
+        "nombre": "Aprobación Gerencial",
+        "campos": [
+          {"id": "field_tg9_aprobacion_para_summit", "campo": "Aprobación para Summit", "tipo": "Lista (picklist)", "req": True, "ayuda": "Aprobación del Gerente para el Summit.", "notas": "Subir deck BSV", "opts": ["Aprobado para Summit", "Pendiente de revisión", "No aprobado"]},
+          {"id": "field_tg9_fecha_de_revision_gerencial", "campo": "Fecha de Revisión Gerencial", "tipo": "Fecha", "req": False, "ayuda": "Fecha en que el Gerente revisó.", "notas": "", "opts": []},
+          {"id": "field_tg9_notas_de_aprobacion", "campo": "Notas de Aprobación", "tipo": "Texto largo", "req": False, "ayuda": "Notas del Gerente de Área.", "notas": "", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG10": {
+    "objeto": "Opportunity",
+    "fase": "WO",
+    "secciones": [
+      {
+        "nombre": "Datos del Summit",
+        "campos": [
+          {"id": "field_tg10_fecha_del_bsv_summit", "campo": "Fecha del BSV Summit", "tipo": "Fecha", "req": True, "ayuda": "Fecha acordada para el Summit.", "notas": "Mail de confirmación requerido", "opts": []},
+          {"id": "field_tg10_participantes_del_cliente_nombre___cargo", "campo": "Participantes del Cliente", "tipo": "Texto largo", "req": True, "ayuda": "Nombre y cargo de cada asistente del cliente.", "notas": "", "opts": []},
+          {"id": "field_tg10_participantes_lammsa", "campo": "Participantes LAMMSA", "tipo": "Texto largo", "req": True, "ayuda": "Representantes de LAMMSA presentes.", "notas": "", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG11": {
+    "objeto": "Opportunity",
+    "fase": "WO",
+    "secciones": [
+      {
+        "nombre": "Datos del Summit",
+        "campos": [
+          {"id": "field_tg11_deck_presentado", "campo": "Deck Presentado", "tipo": "Lista (picklist)", "req": True, "ayuda": "Indica si el deck fue presentado.", "notas": "", "opts": ["Sí", "No — pendiente"]},
+          {"id": "field_tg11_round_table_ejecutado", "campo": "Round-Table Ejecutado", "tipo": "Lista (picklist)", "req": True, "ayuda": "Indica si se ejecutó el round-table.", "notas": "", "opts": ["Sí", "Parcial", "No"]},
+          {"id": "field_tg11_acuerdos_y_proximos_pasos_del_summit", "campo": "Acuerdos y Próximos Pasos del Summit", "tipo": "Texto largo", "req": True, "ayuda": "Acuerdos formalizados durante la sesión.", "notas": "Mail de agradecimiento requerido", "opts": []}
+        ]
+      },
+      {
+        "nombre": "Resultado del Summit",
+        "campos": [
+          {"id": "field_tg11_resultado_del_summit", "campo": "Resultado del Summit", "tipo": "Lista (picklist)", "req": True, "ayuda": "Resultado formal del BSV Summit.", "notas": "", "opts": ["Compromiso verbal — proceden", "Compromiso escrito — NDA / LOI firmado", "Interés sin compromiso — más información", "Sin compromiso — no avanzan"]},
+          {"id": "field_tg11_notas_del_resultado_del_summit", "campo": "Notas del Resultado del Summit", "tipo": "Texto largo", "req": False, "ayuda": "Notas y objeciones del Summit.", "notas": "", "opts": []}
+        ]
+      },
+      {
+        "nombre": "Alcance de la Solución",
+        "campos": [
+          {"id": "field_tg11_plantas_en_scope", "campo": "Plantas en Scope", "tipo": "Texto", "req": True, "ayuda": "Plantas incluidas en el alcance.", "notas": "", "opts": []},
+          {"id": "field_tg11_categorias_incluidas_en_la_solucion", "campo": "Categorías Incluidas en la Solución", "tipo": "Texto largo", "req": True, "ayuda": "Categorías de producto o servicio.", "notas": "", "opts": []},
+          {"id": "field_tg11_modelo_de_servicio", "campo": "Modelo de Servicio", "tipo": "Lista (picklist)", "req": True, "ayuda": "Modelo de servicio propuesto.", "notas": "", "opts": ["Full service — inventario LAMMSA", "Consignación", "Mixto", "A definir"]},
+          {"id": "field_tg11_plan_de_implementacion_por_fases", "campo": "Plan de Implementación por Fases", "tipo": "Texto largo", "req": True, "ayuda": "Entregables, fechas y hitos.", "notas": "", "opts": []}
+        ]
+      },
+      {
+        "nombre": "Economía de la Propuesta",
+        "campos": [
+          {"id": "field_tg11_calculadora_aoi_completada", "campo": "Calculadora AOI Completada", "tipo": "Lista (picklist)", "req": True, "ayuda": "Validación de la calculadora por Finanzas.", "notas": "", "opts": ["Sí — validada", "No — pendiente"]},
+          {"id": "field_tg11_aoi_proyectado_ano_1_usd", "campo": "AOI Proyectado Año 1 ($)", "tipo": "Moneda ($)", "req": True, "ayuda": "AOI proyectado primer año ($USD).", "notas": "", "opts": []},
+          {"id": "field_tg11_aoi_proyectado_anos_2_3_usd", "campo": "AOI Proyectado Años 2-3 ($)", "tipo": "Moneda ($)", "req": True, "ayuda": "AOI proyectado acumulado años 2-3 ($USD).", "notas": "", "opts": []},
+          {"id": "field_tg11_margen_vs_floor_minimo", "campo": "Margen vs Floor Mínimo", "tipo": "Lista (picklist)", "req": True, "ayuda": "Evaluación del margen vs floor mínimo.", "notas": "Bajo el floor no procede", "opts": ["Sobre el floor — aprobado", "En el floor — requiere excepción", "Bajo el floor — no procede"]}
+        ]
+      }
+    ]
+  },
+  "TG12": {
+    "objeto": "Opportunity",
+    "fase": "WO",
+    "secciones": [
+      {
+        "nombre": "Aprobaciones Internas",
+        "campos": [
+          {"id": "field_tg12_aprobacion_ops___supply_chain", "campo": "Aprobación Ops / Supply Chain", "tipo": "Lista (picklist)", "req": True, "ayuda": "Aprobación formal de Operaciones.", "notas": "", "opts": ["Aprobado", "Pendiente", "Rechazado"]},
+          {"id": "field_tg12_aprobacion_finanzas", "campo": "Aprobación Finanzas", "tipo": "Lista (picklist)", "req": True, "ayuda": "Aprobación formal de Finanzas.", "notas": "", "opts": ["Aprobado", "Pendiente", "Rechazado"]},
+          {"id": "field_tg12_propuesta_internamente_aprobada", "campo": "Propuesta Internamente Aprobada", "tipo": "Lista (picklist)", "req": True, "ayuda": "Indicador global de aprobaciones.", "notas": "", "opts": ["Sí — aprobación completa", "No — pendiente aprobaciones"]},
+          {"id": "field_tg12_fecha_de_presentacion_al_cliente", "campo": "Fecha de Presentación al Cliente", "tipo": "Fecha", "req": True, "ayuda": "Fecha confirmada de presentación.", "notas": "Mail de confirmación requerido", "opts": []}
+        ]
+      }
+    ]
+  },
+  "TG13": {
+    "objeto": "Opportunity",
+    "fase": "WO → SO",
+    "secciones": [
+      {
+        "nombre": "Presentación y Negociación",
+        "campos": [
+          {"id": "field_tg13_fecha_de_presentacion_de_propuesta", "campo": "Fecha de Presentación de Propuesta", "tipo": "Fecha", "req": True, "ayuda": "Fecha real en que se presentó.", "notas": "Mail de agradecimiento requerido", "opts": []},
+          {"id": "field_tg13_participantes_del_cliente", "campo": "Participantes del Cliente", "tipo": "Texto largo", "req": True, "ayuda": "Asistentes del cliente a la presentación.", "notas": "", "opts": []},
+          {"id": "field_tg13_economic_buyer_presente", "campo": "¿Economic Buyer Presente?", "tipo": "Lista (picklist)", "req": True, "ayuda": "Indica si el CE estuvo presente.", "notas": "", "opts": ["Sí", "No — representado por Campeón", "No — sin representación ejecutiva"]},
+          {"id": "field_tg13_objeciones_planteadas_y_manejo", "campo": "Objeciones Planteadas y Manejo", "tipo": "Texto largo", "req": False, "ayuda": "Objeciones y respuesta dada.", "notas": "", "opts": []},
+          {"id": "field_tg13_estado_de_la_negociacion", "campo": "Estado de la Negociación", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estado actual de negociación.", "notas": "", "opts": ["Sin objeciones — procede", "Objeciones menores en proceso", "Objeciones mayores — negociación activa", "Stall — cliente no responde"]}
+        ]
+      },
+      {
+        "nombre": "Forecast",
+        "campos": [
+          {"id": "field_tg13_categoria_de_forecast_bsv", "campo": "Categoría de Forecast BSV", "tipo": "Lista (picklist)", "req": True, "ayuda": "Categoría de forecast BSV.", "notas": "Commit requiere CE + Campeón + Paper Process", "opts": ["Pipeline", "Best Case", "Commit Candidato", "Commit", "Ganado — PO emitida"]}
+        ]
+      },
+      {
+        "nombre": "Resultado Final",
+        "campos": [
+          {"id": "field_tg13_resultado_final_de_la_oportunidad", "campo": "Resultado Final de la Oportunidad", "tipo": "Lista (picklist)", "req": True, "ayuda": "Resultado final de la oportunidad.", "notas": "", "opts": ["GANADO — PO emitida", "GANADO — Contrato firmado", "TICKLER — Postergado con fecha", "PERDIDO — XO definitivo"]},
+          {"id": "field_tg13_notas_del_resultado_final", "campo": "Notas del Resultado Final", "tipo": "Texto largo", "req": False, "ayuda": "Notas y aprendizajes del cierre.", "notas": "", "opts": []}
+        ]
+      }
+    ]
+  }
+}
 
-# --- CARGA DINÁMICA DE CAMPOS DESDE EL EXCEL ---
-def cargar_datos_excel():
-    if not os.path.exists(EXCEL_FILE):
-        return None
-    try:
-        import pandas as pd
-        df_listas = pd.read_excel(EXCEL_FILE, sheet_name='_Listas')
-        picklists = {}
-        for col in df_listas.columns:
-            vals = df_listas[col].dropna().tolist()
-            picklists[col] = [str(v).strip() for v in vals]
-
-        tollgates = {}
-        for i in range(14):
-            sheet = f"TG{i}"
-            df = pd.read_excel(EXCEL_FILE, sheet_name=sheet)
-            
-            submeta = str(df.iloc[0, 0])
-            sf_object = "Lead" if "Lead" in submeta else "Opportunity"
-            fase = submeta.split("|")[1].replace("Fase:", "").strip() if "|" in submeta else ""
-            
-            headers = [str(h).strip() for h in df.iloc[2].values.tolist()]
-            data = df.iloc[3:].copy()
-            data.columns = headers
-            
-            secciones = []
-            for sec_name, group in data.groupby('Sección', sort=False):
-                campos = []
-                for idx, row in group.iterrows():
-                    campo = str(row['Campo']).strip()
-                    tipo = str(row['Tipo de Dato']).strip()
-                    req = str(row['Requerido']).strip() == 'Sí'
-                    ayuda = str(row['Ayuda / Descripción']).strip() if pd.notna(row['Ayuda / Descripción']) else ""
-                    notas = str(row['Notas / Condición de Avance']).strip() if pd.notna(row['Notas / Condición de Avance']) else ""
-                    
-                    opts = []
-                    for col, vals in picklists.items():
-                        c_clean = col.replace('BSV_', '').replace('__c', '').lower()
-                        campo_clean = campo.lower().replace(' ', '_').replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u')
-                        if c_clean in campo_clean or campo_clean in c_clean:
-                            opts = vals
-                            break
-                    
-                    # Separación de Nombre y Apellidos en TG0
-                    if sheet == "TG0" and campo == "Nombre / Apellido":
-                        campos.append({'id': 'nombre', 'campo': 'Nombre', 'tipo': 'Texto', 'req': True, 'ayuda': 'Nombre del contacto.', 'notas': '', 'opts': []})
-                        campos.append({'id': 'apellidos', 'campo': 'Apellidos', 'tipo': 'Texto', 'req': True, 'ayuda': 'Apellidos del contacto.', 'notas': '', 'opts': []})
-                    else:
-                        field_id = "field_" + sheet.lower() + "_" + campo.lower().replace(' ', '_').replace('/', '_').replace('-', '_').replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u').replace('ñ','n').replace('(', '').replace(')', '').replace('%', 'pct').replace('$', 'usd')
-                        if campo == "Empresa / Razón Social": field_id = "empresa"
-                        elif campo == "Cargo / Título": field_id = "cargo"
-                        elif campo == "Email Corporativo": field_id = "email"
-                        elif campo == "Teléfono Contacto": field_id = "telefono"
-                        
-                        campos.append({'id': field_id, 'campo': campo, 'tipo': tipo, 'req': req, 'ayuda': ayuda, 'notas': notas, 'opts': opts})
-                
-                secciones.append({'nombre': str(sec_name).strip(), 'campos': campos})
-            
-            tollgates[sheet] = {'objeto': sf_object, 'fase': fase, 'secciones': secciones}
-        return tollgates
-    except Exception as e:
-        print("Error al leer Excel:", e)
-        return None
-
-TOLLGATES_DATA = cargar_datos_excel()
-
-# Base de datos temporal en memoria para la lista "Vistos recientemente"
 REGISTROS_PROSPECTOS = []
 
-# --- PLANTILLA HTML / SALESFORCE LIGHTNING SYSTEM COMPLETO ---
+# --- PLANTILLA HTML SALESFORCE LIGHTNING SYSTEM ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="es">
@@ -110,7 +362,6 @@ HTML_TEMPLATE = """
             color: var(--sf-text-main);
         }
 
-        /* 1. BARRA NAVEGACIÓN SUPERIOR GLOBAL SALESFORCE */
         .sf-global-header {
             background-color: #ffffff;
             border-bottom: 1px solid var(--sf-border);
@@ -120,202 +371,79 @@ HTML_TEMPLATE = """
             justify-content: space-between;
             height: 50px;
         }
-        .sf-app-launcher {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .sf-waffle {
-            display: grid;
-            grid-template-columns: repeat(3, 4px);
-            gap: 3px;
-            cursor: pointer;
-        }
+        .sf-app-launcher { display: flex; align-items: center; gap: 12px; }
+        .sf-waffle { display: grid; grid-template-columns: repeat(3, 4px); gap: 3px; cursor: pointer; }
         .sf-waffle div { width: 4px; height: 4px; background-color: var(--sf-brand); border-radius: 1px; }
         .sf-app-title { font-weight: 700; font-size: 16px; color: #181818; }
         
-        .sf-nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            height: 100%;
-        }
+        .sf-nav-menu { display: flex; align-items: center; gap: 4px; height: 100%; }
         .sf-nav-item {
-            padding: 0 12px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            font-size: 13px;
-            color: #514f4d;
-            cursor: pointer;
+            padding: 0 12px; height: 100%; display: flex; align-items: center;
+            font-size: 13px; color: #514f4d; cursor: pointer; text-decoration: none;
             border-bottom: 3px solid transparent;
-            text-decoration: none;
         }
-        .sf-nav-item.active {
-            color: var(--sf-brand);
-            font-weight: 700;
-            border-bottom-color: var(--sf-brand);
-        }
-
-        .sf-search-bar input {
-            background-color: #f3f3f3;
-            border: 1px solid var(--sf-border);
-            border-radius: 4px;
-            padding: 6px 12px;
-            width: 280px;
-            font-size: 12px;
-        }
+        .sf-nav-item.active { color: var(--sf-brand); font-weight: 700; border-bottom-color: var(--sf-brand); }
 
         .sf-container {
-            max-width: 1400px;
-            margin: 12px auto;
-            background: #ffffff;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            overflow: hidden;
-            border: 1px solid var(--sf-border);
+            max-width: 1400px; margin: 12px auto; background: #ffffff;
+            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            overflow: hidden; border: 1px solid var(--sf-border);
         }
 
-        /* 2. VISTA 1: TABLA VISTOS RECIENTEMENTE (EDITED-IMAGE.PNG) */
+        /* VISTA 1: TABLA VISTOS RECIENTEMENTE */
         .sf-list-header {
-            padding: 16px 24px;
-            background: #ffffff;
-            border-bottom: 1px solid var(--sf-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 16px 24px; background: #ffffff; border-bottom: 1px solid var(--sf-border);
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .sf-list-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .sf-list-title { display: flex; align-items: center; gap: 12px; }
         .sf-lead-icon {
-            width: 32px;
-            height: 32px;
-            background-color: #4bca81;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-        }
-        .sf-list-actions {
-            display: flex;
-            gap: 8px;
+            width: 32px; height: 32px; background-color: #4bca81; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;
         }
         .sf-btn-nuevo {
-            background-color: var(--sf-brand);
-            color: #ffffff;
-            border: 1px solid var(--sf-brand);
-            padding: 7px 18px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            box-shadow: 0 0 0 2px rgba(1,118,211,0.2);
+            background-color: var(--sf-brand); color: #ffffff; border: 1px solid var(--sf-brand);
+            padding: 7px 18px; border-radius: 4px; font-weight: 700; font-size: 13px; cursor: pointer;
         }
         .sf-btn-nuevo:hover { background-color: var(--sf-brand-dark); }
         .sf-btn-sub {
-            background-color: #ffffff;
-            color: var(--sf-brand);
-            border: 1px solid var(--sf-border);
-            padding: 7px 14px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
+            background-color: #ffffff; color: var(--sf-brand); border: 1px solid var(--sf-border);
+            padding: 7px 14px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;
         }
 
-        .sf-table-wrapper {
-            overflow-x: auto;
-            background-color: #ffffff;
-        }
-        .sf-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        .sf-table th {
-            background-color: #fafafa;
-            border-bottom: 2px solid var(--sf-border);
-            padding: 10px 14px;
-            text-align: left;
-            color: #514f4d;
-            font-weight: 700;
-        }
-        .sf-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--sf-border);
-            color: #181818;
-        }
+        .sf-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .sf-table th { background-color: #fafafa; border-bottom: 2px solid var(--sf-border); padding: 10px 14px; text-align: left; color: #514f4d; font-weight: 700; }
+        .sf-table td { padding: 12px 14px; border-bottom: 1px solid var(--sf-border); color: #181818; }
         .sf-table tr:hover { background-color: #f3f3f3; cursor: pointer; }
-        .sf-link-name { color: var(--sf-brand); font-weight: 600; text-decoration: none; }
 
-        /* 3. VISTA 2: VISTA DE DETALLE / FORMULARIO (IMAGE_F1E5FA.PNG) */
+        /* VISTA 2: FORMULARIO Y DETALLE SPLIT (70% / 30%) */
         .sf-detail-top-bar {
-            padding: 12px 24px;
-            background: #ffffff;
-            border-bottom: 1px solid var(--sf-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 12px 24px; background: #ffffff; border-bottom: 1px solid var(--sf-border);
+            display: flex; align-items: center; justify-content: space-between;
         }
         .sf-highlights-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            padding: 12px 24px;
-            background-color: #fafafa;
-            border-bottom: 1px solid var(--sf-border);
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+            padding: 12px 24px; background-color: #fafafa; border-bottom: 1px solid var(--sf-border);
         }
         .sf-highlight-item span { display: block; font-size: 11px; color: var(--sf-text-muted); font-weight: 600; }
         .sf-highlight-item strong { font-size: 13px; color: var(--sf-text-main); }
 
-        /* CHEVRONS PATH BAR */
-        .sf-path-bar {
-            display: flex;
-            background-color: #f3f3f3;
-            padding: 8px 16px;
-            border-bottom: 1px solid var(--sf-border);
-            overflow-x: auto;
-        }
+        .sf-path-bar { display: flex; background-color: #f3f3f3; padding: 8px 16px; border-bottom: 1px solid var(--sf-border); overflow-x: auto; white-space: nowrap; }
         .sf-chevron {
-            flex: 1;
-            padding: 8px 12px 8px 22px;
-            background-color: #eef1f6;
-            color: #3e3e3c;
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-            position: relative;
-            cursor: pointer;
-            margin-right: -12px;
-            clip-path: polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%, 12% 50%);
-            white-space: nowrap;
+            padding: 8px 16px; background-color: #ffffff; color: #3e3e3c; font-size: 12px; font-weight: 700;
+            text-align: center; cursor: pointer; border: 1px solid var(--sf-border); border-radius: 4px; margin-right: 6px;
         }
-        .sf-chevron.active { background-color: var(--sf-path-blue); color: #ffffff; }
+        .sf-chevron.active { background-color: var(--sf-brand); color: #ffffff; border-color: var(--sf-brand); }
 
-        /* ESTRUCTURA SPLIT 70% / 30% */
-        .sf-split-layout {
-            display: grid;
-            grid-template-columns: 7fr 3fr;
-            background-color: #b0c4df;
-            gap: 12px;
-            padding: 12px;
-        }
+        .sf-split-layout { display: grid; grid-template-columns: 7fr 3fr; background-color: #b0c4df; gap: 12px; padding: 12px; }
         @media (max-width: 992px) { .sf-split-layout { grid-template-columns: 1fr; } }
 
         .sf-main-col { background: #ffffff; border-radius: 4px; border: 1px solid var(--sf-border); }
         .sf-side-col { display: flex; flex-direction: column; gap: 12px; }
 
-        /* TABS LEFT COL */
         .sf-tabs { display: flex; border-bottom: 1px solid var(--sf-border); background: #ffffff; padding-left: 16px; }
         .sf-tab { padding: 12px 20px; font-size: 13px; font-weight: 600; color: #514f4d; cursor: pointer; border-bottom: 3px solid transparent; }
         .sf-tab.active { color: var(--sf-brand); border-bottom-color: var(--sf-brand); }
 
-        /* FORM GRID */
         .sf-card-section { background: #ffffff; border: 1px solid var(--sf-border); border-radius: 4px; margin: 16px; overflow: hidden; }
         .sf-card-header { background: #f3f3f3; padding: 10px 16px; font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--sf-border); }
         .sf-field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; padding: 16px; }
@@ -326,9 +454,7 @@ HTML_TEMPLATE = """
         .sf-input, .sf-select, .sf-textarea { padding: 7px 10px; border: 1px solid var(--sf-border); border-radius: 4px; font-size: 13px; box-sizing: border-box; width: 100%; }
         .sf-help-text { font-size: 11px; color: #514f4d; margin-top: 3px; }
 
-        /* SIDEBAR CARDS (RIGHT COL) */
-        .sf-side-card { background: #ffffff; border: 1px solid var(--sf-border); border-radius: 4px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .sf-side-card-title { font-size: 13px; font-weight: 700; color: #181818; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .sf-side-card { background: #ffffff; border: 1px solid var(--sf-border); border-radius: 4px; padding: 14px; }
         .sf-drop-box { border: 2px dashed var(--sf-border); border-radius: 4px; padding: 20px; text-align: center; background: #fafafa; margin-top: 8px; }
 
         .alert-success { background-color: #d4edda; color: #155724; padding: 12px 16px; border-radius: 4px; margin: 12px; border: 1px solid #c3e6cb; font-size: 13px; }
@@ -336,7 +462,6 @@ HTML_TEMPLATE = """
 </head>
 <body>
 
-<!-- BARRA NAVEGACIÓN GLOBAL SALESFORCE -->
 <div class="sf-global-header">
     <div class="sf-app-launcher">
         <div class="sf-waffle"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -352,14 +477,12 @@ HTML_TEMPLATE = """
         <a class="sf-nav-item">Calendario</a>
         <a class="sf-nav-item">Reportes ▾</a>
     </div>
-    <div class="sf-search-bar">
-        <input type="text" placeholder="Buscar en Salesforce...">
-    </div>
+    <div style="font-size:12px; color:#514f4d;">Salesforce CRM BSV</div>
 </div>
 
 <div class="sf-container">
 
-    <!-- ================= VISTA 1: TABLA VISTOS RECIENTEMENTE ================= -->
+    <!-- VISTA 1: TABLA DE PROSPECTOS VISTOS RECIENTEMENTE -->
     <div id="vista-lista" style="display: block;">
         <div class="sf-list-header">
             <div class="sf-list-title">
@@ -369,16 +492,12 @@ HTML_TEMPLATE = """
                     <h2 style="margin:0; font-size:18px;">Vistos recientemente ▾</h2>
                 </div>
             </div>
-            <div class="sf-list-actions">
-                <!-- BOTÓN DESTACADO EN ROJO DE LA IMAGEN EDITED-IMAGE.PNG -->
+            <div>
                 <button class="sf-btn-nuevo" onclick="abrirNuevoFormulario()">+ Nuevo</button>
-                <button class="sf-btn-sub">Vista de inteligencia</button>
-                <button class="sf-btn-sub">Importar</button>
-                <button class="sf-btn-sub">Cambiar estado</button>
             </div>
         </div>
 
-        <div class="sf-table-wrapper">
+        <div style="overflow-x: auto;">
             <table class="sf-table">
                 <thead>
                     <tr>
@@ -391,12 +510,12 @@ HTML_TEMPLATE = """
                         <th>Estado de prospecto</th>
                     </tr>
                 </thead>
-                <tbody id="tabla-prospectos-body">
+                <tbody>
                     {% if registros %}
                         {% for r in registros %}
-                            <tr onclick="verDetalleProspecto('{{ loop.index0 }}')">
+                            <tr>
                                 <td><input type="checkbox"></td>
-                                <td><a class="sf-link-name">{{ r.nombre }} {{ r.apellidos }}</a></td>
+                                <td><a style="color:var(--sf-brand); font-weight:600;">{{ r.nombre }} {{ r.apellidos }}</a></td>
                                 <td>{{ r.cargo or '—' }}</td>
                                 <td>{{ r.empresa or '—' }}</td>
                                 <td>{{ r.telefono or '—' }}</td>
@@ -406,8 +525,8 @@ HTML_TEMPLATE = """
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 30px; color: #514f4d;">
-                                No hay prospectos registrados aún. Haz clic en el botón <strong>"+ Nuevo"</strong> para agregar el primero.
+                            <td colspan="7" style="text-align: center; padding: 35px; color: #514f4d;">
+                                No hay prospectos registrados aún. Haz clic en el botón <strong>"+ Nuevo"</strong> para agregar un registro.
                             </td>
                         </tr>
                     {% endif %}
@@ -416,30 +535,26 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- ================= VISTA 2: DETALLE Y CAPTURA DE PROSPECTO (IMAGE_F1E5FA.PNG) ================= -->
+    <!-- VISTA 2: FORMULARIO Y DETALLE DEL PROSPECTO -->
     <div id="vista-detalle" style="display: none;">
         
-        <!-- HEADER DE DETALLE Y ACCIONES -->
         <div class="sf-detail-top-bar">
             <div style="display:flex; align-items:center; gap:12px;">
                 <button class="sf-btn-sub" onclick="volverALista()">← Volver a la Lista</button>
                 <div class="sf-lead-icon">★</div>
                 <div>
-                    <span style="font-size:11px; color:#514f4d; font-weight:600;">Prospecto</span>
+                    <span style="font-size:11px; color:#514f4d; font-weight:600;" id="header-objeto-fase">Objeto SF: Lead | Fase: BD → MO</span>
                     <h1 id="dyn-lead-title" style="margin:0; font-size:18px;">— Sin registrar —</h1>
                 </div>
             </div>
-            <div style="display:flex; gap:8px;">
+            <div>
                 <button class="sf-btn-sub">+ Seguir</button>
-                <button class="sf-btn-sub">Modificar</button>
-                <button class="sf-btn-sub">Eliminar</button>
             </div>
         </div>
 
-        <!-- HIGHLIGHTS PANEL -->
         <div class="sf-highlights-grid">
             <div class="sf-highlight-item">
-                <span>Compañía</span>
+                <span>Empresa / Razón Social</span>
                 <strong id="dyn-empresa">—</strong>
             </div>
             <div class="sf-highlight-item">
@@ -456,7 +571,7 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- CHEVRONS PATH BAR -->
+        <!-- CHEVRONS PARA NAVEGAR LOS 14 TOLLGATES (TG0 - TG13) -->
         <div class="sf-path-bar">
             {% for tg_key in tg_keys %}
                 <div class="sf-chevron {% if loop.first %}active{% endif %}" id="tab-btn-{{ tg_key }}" onclick="activarTollgate('{{ tg_key }}')">
@@ -465,14 +580,14 @@ HTML_TEMPLATE = """
             {% endfor %}
         </div>
 
-        <!-- LAYOUT SPLIT 70% / 30% -->
+        <!-- FORMULARIO SPLIT 70% / 30% -->
         <form method="POST" id="form-prospecto">
             <div class="sf-split-layout">
                 
-                <!-- COLUMNA PRINCIPAL IZQUIERDA (70%) -->
+                <!-- COLUMNA PRINCIPAL (70%) -->
                 <div class="sf-main-col">
                     <div class="sf-tabs">
-                        <div class="sf-tab active">Detalles</div>
+                        <div class="sf-tab active">Detalles de Captura</div>
                         <div class="sf-tab">Actividad</div>
                         <div class="sf-tab">Chatter</div>
                     </div>
@@ -481,7 +596,6 @@ HTML_TEMPLATE = """
                         <div class="alert-success">{{ mensaje }}</div>
                     {% endif %}
 
-                    <!-- PANTALLAS TOLLGATES (TG0 - TG13) -->
                     {% for tg_key, tg_val in tg_data.items() %}
                         <div id="pantalla-{{ tg_key }}" class="tg-screen" style="{% if not loop.first %}display:none;{% endif %}">
                             {% for seccion in tg_val['secciones'] %}
@@ -495,8 +609,8 @@ HTML_TEMPLATE = """
                                                 </div>
 
                                                 {% if field['tipo'] == 'Lista (picklist)' %}
-                                                    <select name="{{ field['id'] }}" class="sf-input" {% if field['req'] %}required{% endif %}>
-                                                        <option value="">--Seleccione--</option>
+                                                    <select name="{{ field['id'] }}" class="sf-select" {% if field['req'] %}required{% endif %}>
+                                                        <option value="">--Seleccione {{ field['campo'] }}--</option>
                                                         {% for opt in field['opts'] %}
                                                             <option value="{{ opt }}">{{ opt }}</option>
                                                         {% endfor %}
@@ -532,7 +646,7 @@ HTML_TEMPLATE = """
                     </div>
                 </div>
 
-                <!-- COLUMNA DERECHA SIDEBAR (30%) DE RELACIONADOS -->
+                <!-- COLUMNA DERECHA SIDEBAR (30%) -->
                 <div class="sf-side-col">
                     <div class="sf-side-card" style="background:#fff3cd; border-color:#ffeeba;">
                         <span style="font-size:12px; color:#856404; font-weight:600;">⚠ Verificación</span>
@@ -540,30 +654,21 @@ HTML_TEMPLATE = """
                     </div>
 
                     <div class="sf-side-card">
-                        <div class="sf-side-card-title">
-                            <span>Vínculos rápidos de lista relacionada</span>
-                        </div>
+                        <div style="font-size:13px; font-weight:700; margin-bottom:8px;">Vínculos rápidos</div>
                         <ul style="margin:0; padding-left:16px; font-size:12px; color:var(--sf-brand);">
-                            <li style="margin-bottom:4px;"><a style="color:var(--sf-brand);">Historial de aprobaciones (0)</a></li>
-                            <li style="margin-bottom:4px;"><a style="color:var(--sf-brand);">Archivos (0)</a></li>
-                            <li><a style="color:var(--sf-brand);">Notas (0)</a></li>
+                            <li style="margin-bottom:4px;"><a>Historial de aprobaciones (0)</a></li>
+                            <li style="margin-bottom:4px;"><a>Archivos (0)</a></li>
+                            <li><a>Notas (0)</a></li>
                         </ul>
                     </div>
 
                     <div class="sf-side-card">
-                        <div class="sf-side-card-title">
-                            <span>Archivos (0)</span>
-                            <button type="button" class="sf-btn-sub" style="padding:2px 8px; font-size:11px;">Cargar archivos</button>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:13px; font-weight:700;">Archivos (0)</span>
+                            <button type="button" class="sf-btn-sub" style="padding:2px 8px; font-size:11px;">Cargar</button>
                         </div>
                         <div class="sf-drop-box">
-                            <span style="font-size:12px; color:#514f4d;">O suelte archivos aquí</span>
-                        </div>
-                    </div>
-
-                    <div class="sf-side-card">
-                        <div class="sf-side-card-title">
-                            <span>Notas (0)</span>
-                            <button type="button" class="sf-btn-sub" style="padding:2px 8px; font-size:11px;">Nueva</button>
+                            <span style="font-size:12px; color:#514f4d;">Suelte archivos aquí</span>
                         </div>
                     </div>
                 </div>
@@ -599,6 +704,10 @@ HTML_TEMPLATE = """
 
         if (pantallaTarget) pantallaTarget.style.display = 'block';
         if (tabTarget) tabTarget.classList.add('active');
+
+        if (tgMetadatos[tgId]) {
+            document.getElementById('header-objeto-fase').innerText = 'Objeto SF: ' + tgMetadatos[tgId].objeto + ' | Fase: ' + tgMetadatos[tgId].fase;
+        }
     }
 
     function actualizarHighlights() {
@@ -649,10 +758,8 @@ def home():
             'telefono': telefono
         }
         
-        # Guardar en la lista en memoria para visualización en la tabla de Vistos Recientemente
         REGISTROS_PROSPECTOS.append(nuevo_registro)
 
-        # Intento de envío a SharePoint
         try:
             from office365.runtime.auth.user_credential import UserCredential
             from office365.sharepoint.client_context import ClientContext
@@ -667,12 +774,12 @@ def home():
                 "BSV_Telefono_Contacto__c": telefono
             })
             ctx.execute_query()
-            mensaje = f"¡Prospecto '{nombre} {apellidos}' guardado exitosamente en la base de datos de SharePoint!"
+            mensaje = f"¡Prospecto '{nombre} {apellidos}' guardado exitosamente en SharePoint!"
         except Exception as e:
-            mensaje = f"Prospecto guardado localmente en la lista del prototipo."
+            mensaje = f"Prospecto '{nombre} {apellidos}' registrado localmente."
 
-    tg_keys = list(TOLLGATES_DATA.keys()) if TOLLGATES_DATA else []
-    tg_meta_json = json.dumps({k: {"objeto": v["objeto"], "fase": v["fase"]} for k, v in TOLLGATES_DATA.items()}) if TOLLGATES_DATA else "{}"
+    tg_keys = list(TOLLGATES_DATA.keys())
+    tg_meta_json = json.dumps({k: {"objeto": v["objeto"], "fase": v["fase"]} for k, v in TOLLGATES_DATA.items()})
 
     return render_template_string(
         HTML_TEMPLATE,
