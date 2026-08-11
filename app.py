@@ -25,7 +25,8 @@ TOLLGATES_DATA = {
         {"id": "cargo", "campo": "Cargo / Título", "tipo": "Texto", "req": True, "ayuda": "Cargo o posición del contacto.", "notas": ""},
         {"id": "email", "campo": "Email Corporativo", "tipo": "Email", "req": True, "ayuda": "Email corporativo del contacto.", "notas": ""},
         {"id": "telefono", "campo": "Teléfono Contacto", "tipo": "Teléfono", "req": False, "ayuda": "Teléfono directo o móvil.", "notas": ""},
-        {"id": "pais_region", "campo": "País / Región", "tipo": "Lista (picklist)", "req": True, "ayuda": "País o región donde opera el lead.", "notas": "", "opts": ["Mexico", "USA"]}
+        {"id": "whatsapp", "campo": "WhatsApp (Número)", "tipo": "Teléfono", "req": False, "ayuda": "Número con formato internacional y código de país (ej. +52 1 81 1234 5678).", "notas": ""},
+        {"id": "pais_region", "campo": "País / Región", "tipo": "Lista (picklist)", "req": True, "ayuda": "País o región donde opera el lead.", "notas": "", "opts": ["México", "Canadá", "Estados Unidos", "Centroamérica", "España"]}
       ]
     }, {
       "nombre": "Origen y Asignación",
@@ -577,7 +578,7 @@ HTML_TEMPLATE = """
                                                 {% elif field['tipo'] == 'Email' %}
                                                     <input type="email" id="input-{{ field['id'] }}" name="{{ field['id'] }}" class="sf-input" {% if field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] == 'Teléfono' %}
-                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" class="sf-input" {% if field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" class="sf-input" placeholder="{% if field['id'] == 'whatsapp' %}+52 1 81 1234 5678{% else %}+52 81 0000 0000{% endif %}" {% if field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] in ['Número', 'Porcentaje (%)', 'Moneda ($)'] %}
                                                     <input type="number" step="any" name="{{ field['id'] }}" class="sf-input" {% if field['req'] and tg_key == active_tg %}required{% endif %}>
                                                 {% else %}
@@ -595,7 +596,7 @@ HTML_TEMPLATE = """
                         </div>
                     {% endfor %}
 
-                    <!-- BOTÓN PRINCIPAL DE AVANZAR -->
+                    <!-- BOTÓN PRINCIPAL "AVANZAR" -->
                     <div style="padding: 16px; text-align: right; background: #ffffff; border-top: 1px solid var(--sf-border);">
                         <button type="button" class="sf-btn-sub" onclick="volverALista()" style="margin-right: 8px;">Cancelar</button>
                         <button type="submit" class="sf-btn-nuevo">
@@ -658,7 +659,7 @@ HTML_TEMPLATE = """
 
     function activarTollgate(tgId, tgIdx) {
         if (tgIdx > unlockedIndexGlobal) {
-            return false; // Bloqueado: no se puede avanzar sin presionar 'Avanzar'
+            return false; // Bloqueado hasta presionar Avanzar
         }
 
         document.querySelectorAll('.tg-screen').forEach(el => el.style.display = 'none');
@@ -724,15 +725,17 @@ def home():
         cargo = request.form.get('cargo', '')
         email = request.form.get('email', '')
         telefono = request.form.get('telefono', '')
+        whatsapp = request.form.get('whatsapp', '')
 
-        # 1. GUARDADO EN LA BASE DE DATOS LOCAL
+        # 1. GUARDADO LOCAL
         nuevo_registro = {
             'nombre': nombre,
             'apellidos': apellidos,
             'empresa': empresa,
             'cargo': cargo,
             'email': email,
-            'telefono': telefono
+            'telefono': telefono,
+            'whatsapp': whatsapp
         }
         REGISTROS_PROSPECTOS.append(nuevo_registro)
 
@@ -748,14 +751,15 @@ def home():
                 "BSV_Empresa___Razon_Social__c": empresa,
                 "BSV_Cargo___Titulo__c": cargo,
                 "BSV_Email_Corporativo__c": email,
-                "BSV_Telefono_Contacto__c": telefono
+                "BSV_Telefono_Contacto__c": telefono,
+                "BSV_WhatsApp__c": whatsapp
             })
             ctx.execute_query()
             mensaje = f"¡Datos de {current_active_tg} guardados en SharePoint correctamente!"
         except Exception as e:
-            mensaje = f"¡Datos de {current_active_tg} guardados localmente! (Avanzando al siguiente Tollgate)"
+            mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
 
-        # 3. LÓGICA DE AVANCE Y DESBLOQUEO AL SIGUIENTE TOLLGATE
+        # 3. LÓGICA DE AVANCE Y DESBLOQUEO
         current_idx = tg_keys.index(current_active_tg) if current_active_tg in tg_keys else 0
         if current_idx < len(tg_keys) - 1:
             next_idx = current_idx + 1
@@ -764,7 +768,7 @@ def home():
         else:
             active_tg = current_active_tg
             mostrar_detalle = False
-            mensaje = f"¡Captura completa de los 14 Tollgates finalizada exitosamente para {nombre} {apellidos}!"
+            mensaje = f"¡Captura completada para {nombre} {apellidos}!"
 
     tg_meta_json = json.dumps({k: {"objeto": v["objeto"], "fase": v["fase"]} for k, v in TOLLGATES_DATA.items()})
 
