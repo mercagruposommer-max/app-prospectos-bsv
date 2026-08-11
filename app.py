@@ -9,8 +9,29 @@ SITE_URL = "https://tu-empresa.sharepoint.com/sites/tu-sitio"
 USERNAME = "usuario@tu-empresa.com"
 PASSWORD = "TuPassword123"
 
-# Base de datos en memoria para el prototipo
-REGISTROS_PROSPECTOS = []
+# Base de datos local en memoria para el prototipo
+REGISTROS_PROSPECTOS = [
+    {
+        "id": 0,
+        "unlocked_idx": 2,
+        "datos": {
+            "nombre": "Carlos",
+            "apellidos": "Gómez Ramírez",
+            "empresa": "Industrial Monterrey SA",
+            "cargo": "Director de Operaciones",
+            "email": "cgomez@indmonterrey.com",
+            "telefono": "+52 81 8300 1122",
+            "whatsapp": "+52 1 81 8300 1122",
+            "pais_region": "México",
+            "notas_adicionales": "Contacto clave validado en expo.",
+            "macro_segmento": "Industrial",
+            "geografia": "Norte",
+            "relevancia": "Alta",
+            "tamano_empresa": "Mediana — $50-200M",
+            "banda": "K"
+        }
+    }
+]
 
 # MATRIZ COMPLETA DE TOLLGATES (TG0 A TG13)
 TOLLGATES_DATA = {
@@ -92,7 +113,7 @@ TOLLGATES_DATA = {
       "nombre": "Clasificación Comercial",
       "campos": [
         {"id": "clasif_comercial", "campo": "Clasificación Comercial", "tipo": "Lista (picklist)", "req": True, "ayuda": "Clasificación comercial del lead.", "notas": "", "opts": ["K, A, B, C, D"]},
-        {"id": "justif_clasif", "campo": "Justificación de Clasificación", "tipo": "Texto largo", "req": True, "ayuda": "Evidencia de la lógica aplicada.", "notas": ""}
+        {"id": "justif_clasif", "campo": "Justificación de Clasificación", "tipo": "Texto largo", "req": True, "ayuda": "Evidencia de la lógica applied.", "notas": ""}
       ]
     }, {
       "nombre": "Asignación y SLA",
@@ -346,13 +367,17 @@ HTML_TEMPLATE = """
         .sf-btn-nuevo:hover { background-color: var(--sf-brand-dark); }
         .sf-btn-sub {
             background-color: #ffffff; color: var(--sf-brand); border: 1px solid var(--sf-border);
-            padding: 7px 14px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;
+            padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;
         }
+        .sf-btn-action-icon {
+            background: none; border: none; font-size: 15px; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: background 0.2s;
+        }
+        .sf-btn-action-icon:hover { background: #e0e0e0; }
 
         .sf-table { width: 100%; border-collapse: collapse; font-size: 13px; }
         .sf-table th { background-color: #fafafa; border-bottom: 2px solid var(--sf-border); padding: 10px 14px; text-align: left; color: #514f4d; font-weight: 700; }
         .sf-table td { padding: 12px 14px; border-bottom: 1px solid var(--sf-border); color: #181818; }
-        .sf-table tr:hover { background-color: #f3f3f3; cursor: pointer; }
+        .sf-table tr:hover { background-color: #f8f9fb; }
 
         /* VISTA 2: DETALLE / CAPTURA SPLIT */
         .sf-detail-top-bar {
@@ -401,12 +426,16 @@ HTML_TEMPLATE = """
         .sf-label { font-size: 12px; font-weight: 600; color: #514f4d; margin-bottom: 4px; }
         .sf-req { color: var(--sf-required); font-weight: bold; }
         .sf-input, .sf-select, .sf-textarea { padding: 7px 10px; border: 1px solid var(--sf-border); border-radius: 4px; font-size: 13px; box-sizing: border-box; width: 100%; }
+        .sf-input:disabled, .sf-select:disabled, .sf-textarea:disabled { background-color: #f3f3f3; color: #555555; cursor: not-allowed; border-color: #dddbda; }
         .sf-help-text { font-size: 11px; color: #514f4d; margin-top: 3px; }
 
         .sf-side-card { background: #ffffff; border: 1px solid var(--sf-border); border-radius: 4px; padding: 14px; }
         .sf-drop-box { border: 2px dashed var(--sf-border); border-radius: 4px; padding: 20px; text-align: center; background: #fafafa; margin-top: 8px; }
 
         .alert-success { background-color: #d4edda; color: #155724; padding: 12px 16px; border-radius: 4px; margin: 12px; border: 1px solid #c3e6cb; font-size: 13px; font-weight:600; }
+        
+        .badge-read-only { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+        .badge-edit-mode { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -431,7 +460,7 @@ HTML_TEMPLATE = """
 
 <div class="sf-container">
 
-    <!-- VISTA 1: TABLA VISTOS RECIENTEMENTE -->
+    <!-- VISTA 1: TABLA VISTOS RECIENTEMENTE (INICIO) -->
     <div id="vista-lista" style="display: {% if mostrar_detalle %}none{% else %}block{% endif %};">
         <div class="sf-list-header">
             <div class="sf-list-title">
@@ -442,39 +471,77 @@ HTML_TEMPLATE = """
                 </div>
             </div>
             <div>
-                <button class="sf-btn-nuevo" onclick="abrirNuevoFormulario()">+ Nuevo</button>
+                <!-- BOTÓN PARA CREAR NUEVO PROSPECTO -->
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="action_type" value="nuevo">
+                    <button type="submit" class="sf-btn-nuevo">+ Nuevo</button>
+                </form>
             </div>
         </div>
+
+        {% if mensaje and not mostrar_detalle %}
+            <div class="alert-success">{{ mensaje }}</div>
+        {% endif %}
 
         <div style="overflow-x: auto;">
             <table class="sf-table">
                 <thead>
                     <tr>
                         <th width="30"><input type="checkbox"></th>
-                        <th>Nombre completo</th>
+                        <th>Nombre completo (Ver Lectura)</th>
                         <th>Cargo</th>
                         <th>Compañía</th>
                         <th>Teléfono</th>
                         <th>Email</th>
-                        <th>Estado de prospecto</th>
+                        <th>Estado</th>
+                        <th style="text-align: center; width: 110px;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% if registros %}
                         {% for r in registros %}
+                            {% set datos = r.datos %}
+                            {% set nombre_comp = (datos.get('nombre', '') + ' ' + datos.get('apellidos', '')).strip() %}
                             <tr>
                                 <td><input type="checkbox"></td>
-                                <td><a style="color:var(--sf-brand); font-weight:600;">{{ r.nombre }} {{ r.apellidos }}</a></td>
-                                <td>{{ r.cargo or '—' }}</td>
-                                <td>{{ r.empresa or '—' }}</td>
-                                <td>{{ r.telefono or '—' }}</td>
-                                <td>{{ r.email or '—' }}</td>
+                                
+                                <!-- CLIC EN EL NOMBRE: MODO LECTURA NO EDITABLE -->
+                                <td>
+                                    <form method="POST" style="display:inline;">
+                                        <input type="hidden" name="action_type" value="ver_lectura">
+                                        <input type="hidden" name="prospecto_id" value="{{ loop.index0 }}">
+                                        <button type="submit" style="background:none; border:none; color:var(--sf-brand); font-weight:600; cursor:pointer; font-size:13px; text-decoration:underline; padding:0;">
+                                            {{ nombre_comp or '— Sin registrar —' }}
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>{{ datos.get('cargo', '—') }}</td>
+                                <td>{{ datos.get('empresa', '—') }}</td>
+                                <td>{{ datos.get('telefono', '—') }}</td>
+                                <td>{{ datos.get('email', '—') }}</td>
                                 <td><span style="background:#eef4fe; color:#0176d3; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">Nuevo</span></td>
+                                
+                                <!-- BOTONES DE EDITAR (PLUMA) Y BORRAR (BASURA) -->
+                                <td style="text-align: center; white-space: nowrap;">
+                                    <!-- PLUMA DE EDICIÓN -->
+                                    <form method="POST" style="display:inline;">
+                                        <input type="hidden" name="action_type" value="editar">
+                                        <input type="hidden" name="prospecto_id" value="{{ loop.index0 }}">
+                                        <button type="submit" class="sf-btn-action-icon" title="Editar prospecto">🖊️</button>
+                                    </form>
+                                    
+                                    <!-- BASURA PARA BORRAR -->
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('¿Está seguro de borrar el prospecto {{ nombre_comp }}?');">
+                                        <input type="hidden" name="action_type" value="eliminar">
+                                        <input type="hidden" name="prospecto_id" value="{{ loop.index0 }}">
+                                        <button type="submit" class="sf-btn-action-icon" title="Borrar prospecto">🗑️</button>
+                                    </form>
+                                </td>
                             </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 35px; color: #514f4d;">
+                            <td colspan="8" style="text-align: center; padding: 35px; color: #514f4d;">
                                 No hay prospectos registrados aún. Haz clic en el botón <strong>"+ Nuevo"</strong> para agregar un registro.
                             </td>
                         </tr>
@@ -484,56 +551,75 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- VISTA 2: FORMULARIO Y DETALLE SPLIT (70% / 30%) -->
+    <!-- VISTA 2: DETALLE / CAPTURA SPLIT (70% / 30%) -->
     <div id="vista-detalle" style="display: {% if mostrar_detalle %}block{% else %}none{% endif %};">
         
         <div class="sf-detail-top-bar">
             <div style="display:flex; align-items:center; gap:12px;">
-                <button class="sf-btn-sub" onclick="volverALista()">← Volver a la Lista</button>
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="action_type" value="volver_lista">
+                    <button type="submit" class="sf-btn-sub">← Volver a la Lista</button>
+                </form>
                 <div class="sf-lead-icon">★</div>
                 <div>
                     <span style="font-size:11px; color:#514f4d; font-weight:600;" id="header-objeto-fase">Objeto SF: Lead | Fase: BD → MO</span>
-                    <h1 id="dyn-lead-title" style="margin:0; font-size:18px;">— Sin registrar —</h1>
+                    <h1 id="dyn-lead-title" style="margin:0; font-size:18px;">
+                        {% set d_curr = registro_actual.datos if registro_actual else {} %}
+                        {% set n_curr = (d_curr.get('nombre', '') + ' ' + d_curr.get('apellidos', '')).strip() %}
+                        {{ n_curr or '— Sin registrar —' }}
+                    </h1>
                 </div>
             </div>
-            <div>
-                <button class="sf-btn-sub">+ Seguir</button>
+            <div style="display:flex; align-items:center; gap:8px;">
+                {% if modo_lectura %}
+                    <span class="badge-read-only">🔒 Modo Lectura (Solo Consulta)</span>
+                    <form method="POST" style="display:inline;">
+                        <input type="hidden" name="action_type" value="cambiar_a_edicion">
+                        <input type="hidden" name="prospecto_id" value="{{ prospecto_id }}">
+                        <button type="submit" class="sf-btn-sub">✏️ Pasar a Modo Edición</button>
+                    </form>
+                {% else %}
+                    <span class="badge-edit-mode">✏️ Modo Edición</span>
+                {% endif %}
             </div>
         </div>
 
         <div class="sf-highlights-grid">
             <div class="sf-highlight-item">
                 <span>Empresa / Razón Social</span>
-                <strong id="dyn-empresa">—</strong>
+                <strong id="dyn-empresa">{{ d_curr.get('empresa', '—') }}</strong>
             </div>
             <div class="sf-highlight-item">
                 <span>Cargo</span>
-                <strong id="dyn-cargo">—</strong>
+                <strong id="dyn-cargo">{{ d_curr.get('cargo', '—') }}</strong>
             </div>
             <div class="sf-highlight-item">
                 <span>Teléfono</span>
-                <strong id="dyn-telefono">—</strong>
+                <strong id="dyn-telefono">{{ d_curr.get('telefono', '—') }}</strong>
             </div>
             <div class="sf-highlight-item">
                 <span>Email</span>
-                <strong id="dyn-email">—</strong>
+                <strong id="dyn-email">{{ d_curr.get('email', '—') }}</strong>
             </div>
         </div>
 
-        <!-- BARRA DE CHEVRONS CON LÓGICA DE BLOQUEO PROGRESIVO -->
+        <!-- BARRA DE CHEVRONS CON NAVEGACIÓN -->
         <div class="sf-path-bar">
             {% for tg_key in tg_keys %}
                 {% set tg_idx = loop.index0 %}
-                <div class="sf-chevron {% if tg_key == active_tg %}active{% elif tg_idx < unlocked_idx %}completed{% else %}disabled{% endif %}"
+                <!-- EN MODO LECTURA SE PERMITE NAVEGAR LIBREMENTE ENTRE TOLLGATES UNLOCKED -->
+                <div class="sf-chevron {% if tg_key == active_tg %}active{% elif modo_lectura or tg_idx < unlocked_idx %}completed{% else %}disabled{% endif %}"
                      id="tab-btn-{{ tg_key }}"
-                     onclick="{% if tg_idx <= unlocked_idx %}activarTollgate('{{ tg_key }}', {{ tg_idx }}){% else %}return false;{% endif %}">
-                    {% if tg_idx < unlocked_idx %}✓ {% endif %}{{ tg_key }}
+                     onclick="{% if modo_lectura or tg_idx <= unlocked_idx %}activarTollgate('{{ tg_key }}', {{ tg_idx }}){% else %}return false;{% endif %}">
+                    {% if modo_lectura or tg_idx < unlocked_idx %}✓ {% endif %}{{ tg_key }}
                 </div>
             {% endfor %}
         </div>
 
         <!-- FORMULARIO PRINCIPAL -->
         <form method="POST" id="form-prospecto">
+            <input type="hidden" name="action_type" value="avanzar">
+            <input type="hidden" name="prospecto_id" value="{{ prospecto_id }}">
             <input type="hidden" name="current_active_tg" id="current_active_tg" value="{{ active_tg }}">
             <input type="hidden" name="unlocked_idx" id="unlocked_idx" value="{{ unlocked_idx }}">
 
@@ -546,7 +632,7 @@ HTML_TEMPLATE = """
                         <div class="sf-tab">Chatter</div>
                     </div>
 
-                    {% if mensaje %}
+                    {% if mensaje and mostrar_detalle %}
                         <div class="alert-success">{{ mensaje }}</div>
                     {% endif %}
 
@@ -557,32 +643,33 @@ HTML_TEMPLATE = """
                                     <div class="sf-card-header">▼ {{ seccion['nombre'] }}</div>
                                     <div class="sf-field-grid">
                                         {% for field in seccion['campos'] %}
+                                            {% set f_val = d_curr.get(field['id'], '') %}
                                             <div class="sf-field-group" {% if field['tipo'] == 'Texto largo' %}style="grid-column: span 2;"{% endif %}>
                                                 <div class="sf-label">
-                                                    {% if field['req'] %}<span class="sf-req">*</span>{% endif %}{{ field['campo'] }}
+                                                    {% if field['req'] and not modo_lectura %}<span class="sf-req">*</span>{% endif %}{{ field['campo'] }}
                                                 </div>
 
                                                 {% if field['tipo'] == 'Lista (picklist)' %}
-                                                    <select name="{{ field['id'] }}" class="sf-select" {% if field['req'] and tg_key == active_tg %}required{% endif %}>
+                                                    <select name="{{ field['id'] }}" class="sf-select" {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %}>
                                                         <option value="">--Seleccione {{ field['campo'] }}--</option>
                                                         {% if field['opts'] %}
                                                             {% for opt in field['opts'] %}
-                                                                <option value="{{ opt }}">{{ opt }}</option>
+                                                                <option value="{{ opt }}" {% if f_val == opt %}selected{% endif %}>{{ opt }}</option>
                                                             {% endfor %}
                                                         {% endif %}
                                                     </select>
                                                 {% elif field['tipo'] == 'Texto largo' %}
-                                                    <textarea name="{{ field['id'] }}" class="sf-textarea" rows="3" {% if field['req'] and tg_key == active_tg %}required{% endif %}></textarea>
+                                                    <textarea name="{{ field['id'] }}" class="sf-textarea" rows="3" {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %}>{{ f_val }}</textarea>
                                                 {% elif field['tipo'] == 'Fecha' %}
-                                                    <input type="date" name="{{ field['id'] }}" class="sf-input" {% if field['req'] and tg_key == active_tg %}required{% endif %}>
+                                                    <input type="date" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %}>
                                                 {% elif field['tipo'] == 'Email' %}
-                                                    <input type="email" id="input-{{ field['id'] }}" name="{{ field['id'] }}" class="sf-input" {% if field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="email" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] == 'Teléfono' %}
-                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" class="sf-input" placeholder="{% if field['id'] == 'whatsapp' %}+52 1 81 1234 5678{% else %}+52 81 0000 0000{% endif %}" {% if field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="{% if field['id'] == 'whatsapp' %}+52 1 81 1234 5678{% else %}+52 81 0000 0000{% endif %}" {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] in ['Número', 'Porcentaje (%)', 'Moneda ($)'] %}
-                                                    <input type="number" step="any" name="{{ field['id'] }}" class="sf-input" {% if field['req'] and tg_key == active_tg %}required{% endif %}>
+                                                    <input type="number" step="any" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %}>
                                                 {% else %}
-                                                    <input type="text" id="input-{{ field['id'] }}" name="{{ field['id'] }}" class="sf-input" {% if field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="text" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %} oninput="actualizarHighlights()">
                                                 {% endif %}
 
                                                 {% if field['ayuda'] %}
@@ -596,12 +683,27 @@ HTML_TEMPLATE = """
                         </div>
                     {% endfor %}
 
-                    <!-- BOTÓN PRINCIPAL "AVANZAR" -->
+                    <!-- ACCIONES INFERIORES -->
                     <div style="padding: 16px; text-align: right; background: #ffffff; border-top: 1px solid var(--sf-border);">
-                        <button type="button" class="sf-btn-sub" onclick="volverALista()" style="margin-right: 8px;">Cancelar</button>
-                        <button type="submit" class="sf-btn-nuevo">
-                            {% if active_tg == 'TG13' %}Avanzar y Finalizar{% else %}Avanzar ➔{% endif %}
-                        </button>
+                        {% if modo_lectura %}
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="action_type" value="volver_lista">
+                                <button type="submit" class="sf-btn-sub" style="margin-right:8px;">Cerrar / Volver a la Lista</button>
+                            </form>
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="action_type" value="cambiar_a_edicion">
+                                <input type="hidden" name="prospecto_id" value="{{ prospecto_id }}">
+                                <button type="submit" class="sf-btn-nuevo">✏️ Pasar a Modo Edición</button>
+                            </form>
+                        {% else %}
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="action_type" value="volver_lista">
+                                <button type="submit" class="sf-btn-sub" style="margin-right: 8px;">Cancelar</button>
+                            </form>
+                            <button type="submit" class="sf-btn-nuevo">
+                                {% if active_tg == 'TG13' %}Avanzar y Finalizar{% else %}Avanzar ➔{% endif %}
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -640,26 +742,12 @@ HTML_TEMPLATE = """
 
 <script>
     const tgMetadatos = {{ tg_meta_json|safe }};
+    const modoLecturaGlobal = {% if modo_lectura %}true{% else %}false{% endif %};
     const unlockedIndexGlobal = {{ unlocked_idx }};
 
-    function abrirNuevoFormulario() {
-        document.getElementById('form-prospecto').reset();
-        document.getElementById('unlocked_idx').value = 0;
-        document.getElementById('current_active_tg').value = 'TG0';
-        actualizarHighlights();
-        document.getElementById('vista-lista').style.display = 'none';
-        document.getElementById('vista-detalle').style.display = 'block';
-        activarTollgate('TG0', 0);
-    }
-
-    function volverALista() {
-        document.getElementById('vista-detalle').style.display = 'none';
-        document.getElementById('vista-lista').style.display = 'block';
-    }
-
     function activarTollgate(tgId, tgIdx) {
-        if (tgIdx > unlockedIndexGlobal) {
-            return false; // Bloqueado hasta presionar Avanzar
+        if (!modoLecturaGlobal && tgIdx > unlockedIndexGlobal) {
+            return false; // En modo edición no se puede saltar hacia adelante sin 'Avanzar'
         }
 
         document.querySelectorAll('.tg-screen').forEach(el => el.style.display = 'none');
@@ -671,7 +759,8 @@ HTML_TEMPLATE = """
         if (pantallaTarget) pantallaTarget.style.display = 'block';
         if (tabTarget) tabTarget.classList.add('active');
 
-        document.getElementById('current_active_tg').value = tgId;
+        const activeElem = document.getElementById('current_active_tg');
+        if (activeElem) activeElem.value = tgId;
 
         if (tgMetadatos[tgId]) {
             document.getElementById('header-objeto-fase').innerText = 'Objeto SF: ' + tgMetadatos[tgId].objeto + ' | Fase: ' + tgMetadatos[tgId].fase;
@@ -710,65 +799,133 @@ HTML_TEMPLATE = """
 def home():
     mensaje = None
     mostrar_detalle = False
+    modo_lectura = False
     active_tg = 'TG0'
     unlocked_idx = 0
+    prospecto_id = -1
+    registro_actual = None
     tg_keys = list(TOLLGATES_DATA.keys())
 
     if request.method == 'POST':
-        mostrar_detalle = True
-        current_active_tg = request.form.get('current_active_tg', 'TG0')
-        unlocked_idx = int(request.form.get('unlocked_idx', 0))
+        action_type = request.form.get('action_type', '')
 
-        nombre = request.form.get('nombre', '')
-        apellidos = request.form.get('apellidos', '')
-        empresa = request.form.get('empresa', '')
-        cargo = request.form.get('cargo', '')
-        email = request.form.get('email', '')
-        telefono = request.form.get('telefono', '')
-        whatsapp = request.form.get('whatsapp', '')
+        # 1. ACCIÓN: VER EN MODO LECTURA (CLIC EN EL NOMBRE DEL PROSPECTO)
+        if action_type == 'ver_lectura':
+            prospecto_id = int(request.form.get('prospecto_id', -1))
+            if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
+                registro_actual = REGISTROS_PROSPECTOS[prospecto_id]
+                unlocked_idx = registro_actual.get('unlocked_idx', 0)
+                active_tg = registro_actual.get('active_tg', 'TG0')
+                mostrar_detalle = True
+                modo_lectura = True
 
-        # 1. GUARDADO LOCAL
-        nuevo_registro = {
-            'nombre': nombre,
-            'apellidos': apellidos,
-            'empresa': empresa,
-            'cargo': cargo,
-            'email': email,
-            'telefono': telefono,
-            'whatsapp': whatsapp
-        }
-        REGISTROS_PROSPECTOS.append(nuevo_registro)
+        # 2. ACCIÓN: EDITAR PROSPECTO (CLIC EN LA PLUNA)
+        elif action_type == 'editar':
+            prospecto_id = int(request.form.get('prospecto_id', -1))
+            if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
+                registro_actual = REGISTROS_PROSPECTOS[prospecto_id]
+                unlocked_idx = registro_actual.get('unlocked_idx', 0)
+                active_tg = registro_actual.get('active_tg', 'TG0')
+                mostrar_detalle = True
+                modo_lectura = False
 
-        # 2. GUARDADO EN SHAREPOINT
-        try:
-            from office365.runtime.auth.user_credential import UserCredential
-            from office365.sharepoint.client_context import ClientContext
-            ctx = ClientContext(SITE_URL).with_credentials(UserCredential(USERNAME, PASSWORD))
-            target_list = ctx.web.lists.get_by_title("BSV_Leads")
-            
-            target_list.add_item({
-                "Title": f"{nombre} {apellidos}".strip(),
-                "BSV_Empresa___Razon_Social__c": empresa,
-                "BSV_Cargo___Titulo__c": cargo,
-                "BSV_Email_Corporativo__c": email,
-                "BSV_Telefono_Contacto__c": telefono,
-                "BSV_WhatsApp__c": whatsapp
-            })
-            ctx.execute_query()
-            mensaje = f"¡Datos de {current_active_tg} guardados en SharePoint correctamente!"
-        except Exception as e:
-            mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
+        # 3. ACCIÓN: CAMBIAR DE MODO LECTURA A MODO EDICIÓN
+        elif action_type == 'cambiar_a_edicion':
+            prospecto_id = int(request.form.get('prospecto_id', -1))
+            if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
+                registro_actual = REGISTROS_PROSPECTOS[prospecto_id]
+                unlocked_idx = registro_actual.get('unlocked_idx', 0)
+                active_tg = registro_actual.get('active_tg', 'TG0')
+                mostrar_detalle = True
+                modo_lectura = False
 
-        # 3. LÓGICA DE AVANCE Y DESBLOQUEO
-        current_idx = tg_keys.index(current_active_tg) if current_active_tg in tg_keys else 0
-        if current_idx < len(tg_keys) - 1:
-            next_idx = current_idx + 1
-            unlocked_idx = max(unlocked_idx, next_idx)
-            active_tg = tg_keys[next_idx]
-        else:
-            active_tg = current_active_tg
+        # 4. ACCIÓN: ELIMINAR PROSPECTO (CLIC EN LA BASURA)
+        elif action_type == 'eliminar':
+            prospecto_id = int(request.form.get('prospecto_id', -1))
+            if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
+                eliminado = REGISTROS_PROSPECTOS.pop(prospecto_id)
+                nom = (eliminado['datos'].get('nombre', '') + ' ' + eliminado['datos'].get('apellidos', '')).strip()
+                mensaje = f"¡Prospecto '{nom or 'Seleccionado'}' eliminado correctamente de la base de datos!"
             mostrar_detalle = False
-            mensaje = f"¡Captura completada para {nombre} {apellidos}!"
+
+        # 5. ACCIÓN: CREAR NUEVO PROSPECTO (+ NUEVO)
+        elif action_type == 'nuevo':
+            mostrar_detalle = True
+            modo_lectura = False
+            prospecto_id = -1
+            unlocked_idx = 0
+            active_tg = 'TG0'
+            registro_actual = {"id": -1, "unlocked_idx": 0, "active_tg": "TG0", "datos": {}}
+
+        # 6. ACCIÓN: AVANZAR DE TOLLGATE Y GUARDAR EN BD
+        elif action_type == 'avanzar':
+            mostrar_detalle = True
+            modo_lectura = False
+            prospecto_id = int(request.form.get('prospecto_id', -1))
+            current_active_tg = request.form.get('current_active_tg', 'TG0')
+            unlocked_idx = int(request.form.get('unlocked_idx', 0))
+
+            # Recopilar todos los campos del formulario
+            datos_capturados = {}
+            for key, val in request.form.items():
+                if key not in ['action_type', 'prospecto_id', 'current_active_tg', 'unlocked_idx']:
+                    datos_capturados[key] = val.strip()
+
+            # Lógica de actualización o creación en memoria
+            if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
+                REGISTROS_PROSPECTOS[prospecto_id]['datos'].update(datos_capturados)
+                registro_actual = REGISTROS_PROSPECTOS[prospecto_id]
+            else:
+                registro_actual = {
+                    "id": len(REGISTROS_PROSPECTOS),
+                    "unlocked_idx": unlocked_idx,
+                    "active_tg": current_active_tg,
+                    "datos": datos_capturados
+                }
+                REGISTROS_PROSPECTOS.append(registro_actual)
+                prospecto_id = len(REGISTROS_PROSPECTOS) - 1
+
+            # Lógica de guardado en SharePoint
+            nombre = datos_capturados.get('nombre', '')
+            apellidos = datos_capturados.get('apellidos', '')
+            empresa = datos_capturados.get('empresa', '')
+
+            try:
+                from office365.runtime.auth.user_credential import UserCredential
+                from office365.sharepoint.client_context import ClientContext
+                ctx = ClientContext(SITE_URL).with_credentials(UserCredential(USERNAME, PASSWORD))
+                target_list = ctx.web.lists.get_by_title("BSV_Leads")
+                
+                target_list.add_item({
+                    "Title": f"{nombre} {apellidos}".strip(),
+                    "BSV_Empresa___Razon_Social__c": empresa,
+                    "BSV_Cargo___Titulo__c": datos_capturados.get('cargo', ''),
+                    "BSV_Email_Corporativo__c": datos_capturados.get('email', ''),
+                    "BSV_Telefono_Contacto__c": datos_capturados.get('telefono', ''),
+                    "BSV_WhatsApp__c": datos_capturados.get('whatsapp', ''),
+                    "BSV_Pais___Region__c": datos_capturados.get('pais_region', '')
+                })
+                ctx.execute_query()
+                mensaje = f"¡Datos de {current_active_tg} guardados exitosamente en SharePoint!"
+            except Exception as e:
+                mensaje = f"¡Datos de {current_active_tg} guardados localmente! Avanzando al siguiente Tollgate."
+
+            # Calcular el siguiente Tollgate
+            current_idx = tg_keys.index(current_active_tg) if current_active_tg in tg_keys else 0
+            if current_idx < len(tg_keys) - 1:
+                next_idx = current_idx + 1
+                unlocked_idx = max(unlocked_idx, next_idx)
+                active_tg = tg_keys[next_idx]
+            else:
+                active_tg = current_active_tg
+                mostrar_detalle = False
+                mensaje = f"¡Captura completa de los 14 Tollgates finalizada exitosamente para {nombre} {apellidos}!"
+
+            registro_actual['unlocked_idx'] = unlocked_idx
+            registro_actual['active_tg'] = active_tg
+
+        elif action_type == 'volver_lista':
+            mostrar_detalle = False
 
     tg_meta_json = json.dumps({k: {"objeto": v["objeto"], "fase": v["fase"]} for k, v in TOLLGATES_DATA.items()})
 
@@ -778,7 +935,10 @@ def home():
         tg_keys=tg_keys,
         active_tg=active_tg,
         unlocked_idx=unlocked_idx,
+        modo_lectura=modo_lectura,
         mostrar_detalle=mostrar_detalle,
+        prospecto_id=prospecto_id,
+        registro_actual=registro_actual,
         tg_meta_json=tg_meta_json,
         registros=REGISTROS_PROSPECTOS,
         mensaje=mensaje
