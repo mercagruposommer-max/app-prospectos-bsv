@@ -24,10 +24,12 @@ REGISTROS_PROSPECTOS = [
             "whatsapp": "+52 1 81 8300 1122",
             "pais_region": "México",
             "notas_adicionales": "Contacto clave validado en expo.",
-            "macro_segmento": "Industrial",
+            "macro_segmento": "Industrial y Manufactura",
+            "sub_segmento": "Manufactura de Plásticos",
+            "actividad_economica": "Transformación / Producción",
             "geografia": "Norte",
             "relevancia": "Alta",
-            "tamano_empresa": "Mediana — $50-200M",
+            "tamano_empresa": "Más de $10,000,000",
             "banda": "K"
         }
     }
@@ -61,11 +63,18 @@ TOLLGATES_DATA = {
     "secciones": [{
       "nombre": "Segmentación y Fit",
       "campos": [
-        {"id": "macro_segmento", "campo": "Macro Segmento", "tipo": "Lista (picklist)", "req": True, "ayuda": "Macro segmento al que pertenece el lead.", "notas": "", "opts": ["Industrial", "Automotriz", "Alimentos y Bebidas"]},
-        {"id": "sub_segmento", "campo": "Sub-Segmento", "tipo": "Lista (picklist)", "req": False, "ayuda": "Sub-segmento específico.", "notas": "", "opts": ["Manufactura", "Empaque", "Ensamblaje"]},
+        {"id": "macro_segmento", "campo": "Macro Segmento", "tipo": "Lista (picklist)", "req": True, "ayuda": "Macro segmento al que pertenece el lead según la taxonomía BSV LAMMSA.", "notas": "", "opts": ["Industrial y Manufactura", "Automotriz y Autopartes", "Alimentos y Bebidas", "Metalmecánica y Siderurgia", "Químico y Farmacéutico", "Logística y Distribución", "Comercio y Servicios"]},
+        {"id": "sub_segmento", "campo": "Sub-Segmento", "tipo": "Lista (picklist)", "req": False, "ayuda": "Sub-segmento específico de la industria.", "notas": "", "opts": ["Manufactura de Plásticos", "Empaque y Embalaje", "Ensamblaje Mecánico", "Mantenimiento Industrial MRO", "Mecanizado y Troquelado"]},
+        {"id": "actividad_economica", "campo": "Actividad Económica", "tipo": "Lista (picklist)", "req": False, "ayuda": "Actividad económica específica del cliente.", "notas": "", "opts": ["Transformación / Producción", "Comercialización / Distribución", "Prestación de Servicios", "Extracción / Materia Prima"]},
         {"id": "geografia", "campo": "Geografía", "tipo": "Lista (picklist)", "req": True, "ayuda": "Región geográfica donde opera el cliente.", "notas": "", "opts": ["Norte", "Centro", "Bajio", "Occidente", "Golfo"]},
         {"id": "relevancia", "campo": "Relevancia del Portafolio", "tipo": "Lista (picklist)", "req": True, "ayuda": "Nivel de relevancia del portafolio.", "notas": "", "opts": ["Alta", "Media", "Baja"]},
-        {"id": "tamano_empresa", "campo": "Tamaño de Empresa", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estimación del tamaño por ventas anuales.", "notas": "", "opts": ["Micro — <$10M", "Pequeña — $10-50M", "Mediana — $50-200M", "Grande — $200M-$1B", "Enterprise — >$1B"]},
+        {"id": "tamano_empresa", "campo": "Tamaño de Empresa", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estimación del tamaño de la empresa por ventas anuales.", "notas": "", "opts": [
+            "Más de $10,000,000",
+            "$5,000,000 a $10,000,000",
+            "$1,000,000 a $4,999,999",
+            "$150,000 a $999,999",
+            "$0 a $149,999"
+        ]},
         {"id": "banda", "campo": "Banda Asignada", "tipo": "Lista (picklist)", "req": True, "ayuda": "Banda de clasificación BSV del cliente.", "notas": "si es K o A, entonces es BSV - Normal", "opts": ["K", "A", "B", "C", "D"]}
       ]
     }]
@@ -113,7 +122,7 @@ TOLLGATES_DATA = {
       "nombre": "Clasificación Comercial",
       "campos": [
         {"id": "clasif_comercial", "campo": "Clasificación Comercial", "tipo": "Lista (picklist)", "req": True, "ayuda": "Clasificación comercial del lead.", "notas": "", "opts": ["K, A, B, C, D"]},
-        {"id": "justif_clasif", "campo": "Justificación de Clasificación", "tipo": "Texto largo", "req": True, "ayuda": "Evidencia de la lógica applied.", "notas": ""}
+        {"id": "justif_clasif", "campo": "Justificación de Clasificación", "tipo": "Texto largo", "req": True, "ayuda": "Evidencia de la lógica aplicada.", "notas": ""}
       ]
     }, {
       "nombre": "Asignación y SLA",
@@ -607,7 +616,6 @@ HTML_TEMPLATE = """
         <div class="sf-path-bar">
             {% for tg_key in tg_keys %}
                 {% set tg_idx = loop.index0 %}
-                <!-- EN MODO LECTURA SE PERMITE NAVEGAR LIBREMENTE ENTRE TOLLGATES UNLOCKED -->
                 <div class="sf-chevron {% if tg_key == active_tg %}active{% elif modo_lectura or tg_idx < unlocked_idx %}completed{% else %}disabled{% endif %}"
                      id="tab-btn-{{ tg_key }}"
                      onclick="{% if modo_lectura or tg_idx <= unlocked_idx %}activarTollgate('{{ tg_key }}', {{ tg_idx }}){% else %}return false;{% endif %}">
@@ -819,7 +827,7 @@ def home():
                 mostrar_detalle = True
                 modo_lectura = True
 
-        # 2. ACCIÓN: EDITAR PROSPECTO (CLIC EN LA PLUNA)
+        # 2. ACCIÓN: EDITAR PROSPECTO (CLIC EN LA PLUMA)
         elif action_type == 'editar':
             prospecto_id = int(request.form.get('prospecto_id', -1))
             if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
@@ -908,7 +916,7 @@ def home():
                 ctx.execute_query()
                 mensaje = f"¡Datos de {current_active_tg} guardados exitosamente en SharePoint!"
             except Exception as e:
-                mensaje = f"¡Datos de {current_active_tg} guardados localmente! Avanzando al siguiente Tollgate."
+                mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
 
             # Calcular el siguiente Tollgate
             current_idx = tg_keys.index(current_active_tg) if current_active_tg in tg_keys else 0
