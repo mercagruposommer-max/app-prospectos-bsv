@@ -9,214 +9,458 @@ SITE_URL = "https://tu-empresa.sharepoint.com/sites/tu-sitio"
 USERNAME = "usuario@tu-empresa.com"
 PASSWORD = "TuPassword123"
 
-# --- LISTAS OFICIALES EXTRAÍDAS DEL EXCEL DE MACROSEGMENTOS LAMMSA ---
-MACRO_SEGMENTOS_LIST = [
-  "IIA — Infraestructura Inteligente y Automatización Industrial",
-  "EYU — Energía y Utilidades",
-  "ENR — Energías Renovables",
-  "EEE — Electrónica y Equipos Eléctricos",
-  "AYD — Aeronáutica y Defensa",
-  "AYT — Automotriz y Transporte",
-  "MIP — Maquinaria Industrial y Equipo Pesado",
-  "EAR — Equipo Agrícola, Pecuario, Sistemas de Riego y Jardinería",
-  "APG — Agricultura, Pesca, Gandería",
-  "EYC — Edificación y Construcción",
-  "FME — Fabriciones Metálicas",
-  "PAM — Procesamiento de Alimentos y Manufactura Especializada",
-  "SYM — Salud y Medicina",
-  "MRO — Mantenimiento MRO",
-  "ELA — Electrodomésticos, Línea Blanca y Aires Acondicionados Compactos",
-  "MUE — Muebles y Maderas",
-  "MAR — Marina y Construcción Naval",
-  "CME — Comercio al por menor",
-  "CMA — Comercio al por mayor",
-  "MIN — Minería",
-  "PYC — Papel, Cartón y productos derivados",
-  "OIS — Otras Industrias y Servicios"
-]
+# --- MATRIZ DE JERARQUÍA EXTRAÍDA DEL EXCEL DE MACROSEGMENTOS LAMMSA ---
+HIERARCHY_DATA = {
+  "IIA — Infraestructura Inteligente y Automatización Industrial": {
+    "subs": [
+      "IIA-01 — Robótica y Manufactura Avanzada",
+      "IIA-02 — Plataformas IIoT (Plataformas Industriales del Internet de las Cosas)",
+      "IIA-03 — Visión Artificial"
+    ],
+    "acts": [
+      "333999 — Fabricación de otra maquinaria y equipo para la industria en general",
+      "334519 — Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico",
+      "333249 — Fabricación de maquinaria y equipo para otras industrias manufactureras"
+    ],
+    "sub_map": {
+      "IIA-01 — Robótica y Manufactura Avanzada": [
+        "333999 — Fabricación de otra maquinaria y equipo para la industria en general"
+      ],
+      "IIA-02 — Plataformas IIoT (Plataformas Industriales del Internet de las Cosas)": [
+        "334519 — Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico"
+      ],
+      "IIA-03 — Visión Artificial": [
+        "333249 — Fabricación de maquinaria y equipo para otras industrias manufactureras"
+      ]
+    }
+  },
+  "EYU — Energía y Utilidades": {
+    "subs": [
+      "EYU-01 — Equipo de Transmisión y Distribución de energía",
+      "EYU-02 — Equipo de Transmisión y Distribución de energía",
+      "EYU-03 — Generación y Distribución de Eneregía",
+      "EYU-04 — Agua",
+      "EYU-05 — Petróleo y Gas"
+    ],
+    "acts": [
+      "335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica",
+      "335311 — Fabricación de motores y generadores eléctricos",
+      "221111 — Generación de electricidad a partir de combustibles fósiles",
+      "221112 — Generación de electricidad a partir de energía hidráulica",
+      "221122 — Distribución de energía eléctrica",
+      "221119 — Generación de electricidad a partir de otro tipo de energía",
+      "221121 — Transmisión de energía eléctrica",
+      "221123 — Comercialización de energía eléctrica",
+      "237133 — Supervisión de construcción de obras de generación y conducción de energía eléctrica y de obras para telecomunicaciones",
+      "237131 — Construcción de obras de generación y conducción de energía eléctrica",
+      "221312 — Captación, tratamiento y suministro de agua (sector público)",
+      "237111 — Construcción de obras para el tratamiento, distribución y suministro de agua y drenaje",
+      "221311 — Captación, tratamiento y suministro de agua (sector privado)",
+      "213111 — Perforación de pozos petroleros y de gas",
+      "211111 — Extracción de petróleo y gas natural asociado",
+      "324110 — Refinación de petróleo",
+      "237122 — Construcción de plantas de refinería y petroquímica",
+      "221210 — Suministro de gas natural por ductos al consumidor final"
+    ],
+    "sub_map": {
+      "EYU-01 — Equipo de Transmisión y Distribución de energía": [
+        "335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica"
+      ],
+      "EYU-02 — Equipo de Transmisión y Distribución de energía": [
+        "335311 — Fabricación de motores y generadores eléctricos"
+      ],
+      "EYU-03 — Generación y Distribución de Eneregía": [
+        "221111 — Generación de electricidad a partir de combustibles fósiles",
+        "221112 — Generación de electricidad a partir de energía hidráulica",
+        "221122 — Distribución de energía eléctrica",
+        "221119 — Generación de electricidad a partir de otro tipo de energía",
+        "221121 — Transmisión de energía eléctrica",
+        "221123 — Comercialización de energía eléctrica",
+        "237133 — Supervisión de construcción de obras de generación y conducción de energía eléctrica y de obras para telecomunicaciones",
+        "237131 — Construcción de obras de generación y conducción de energía eléctrica"
+      ],
+      "EYU-04 — Agua": [
+        "221312 — Captación, tratamiento y suministro de agua (sector público)",
+        "237111 — Construcción de obras para el tratamiento, distribución y suministro de agua y drenaje",
+        "221311 — Captación, tratamiento y suministro de agua (sector privado)"
+      ],
+      "EYU-05 — Petróleo y Gas": [
+        "213111 — Perforación de pozos petroleros y de gas",
+        "211111 — Extracción de petróleo y gas natural asociado",
+        "324110 — Refinación de petróleo",
+        "237122 — Construcción de plantas de refinería y petroquímica",
+        "221210 — Suministro de gas natural por ductos al consumidor final"
+      ]
+    }
+  },
+  "ENR — Energías Renovables": {
+    "subs": [
+      "ENR-01 — Energía Solar",
+      "ENR-02 — Energía Eólica",
+      "ENR-03 — Almacenamiento de energía y Baterías"
+    ],
+    "acts": [
+      "335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica",
+      "221113 — Generación de electricidad a partir de energía solar",
+      "333610 — Fabricación de motores de combustión interna, turbinas y transmisiones",
+      "221114 — Generación de electricidad a partir de energía eólica",
+      "335910 — Fabricación de acumuladores y pilas"
+    ],
+    "sub_map": {
+      "ENR-01 — Energía Solar": [
+        "335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica",
+        "221113 — Generación de electricidad a partir de energía solar"
+      ],
+      "ENR-02 — Energía Eólica": [
+        "333610 — Fabricación de motores de combustión interna, turbinas y transmisiones",
+        "221114 — Generación de electricidad a partir de energía eólica"
+      ],
+      "ENR-03 — Almacenamiento de energía y Baterías": [
+        "335910 — Fabricación de acumuladores y pilas"
+      ]
+    }
+  },
+  "EEE — Electrónica y Equipos Eléctricos": {
+    "subs": [
+      "EEE-01 — Ensamble de PCB (Tarjetas de Circuitos)",
+      "EEE-02 — Semiconductores",
+      "EEE-03 — Equipo eléctrico que incluye Inversores y Convertidores de corriente",
+      "EEE-04 — Conectores",
+      "EEE-05 — Iluminación"
+    ],
+    "acts": [
+      "334410 — Fabricación de componentes electrónicos",
+      "335999 — Fabricación de otros equipos eléctricos",
+      "335920 — Fabricación de cables de conducción eléctrica",
+      "335120 — Fabricación de lámparas y luminarias"
+    ],
+    "sub_map": {
+      "EEE-01 — Ensamble de PCB (Tarjetas de Circuitos)": [
+        "334410 — Fabricación de componentes electrónicos"
+      ],
+      "EEE-02 — Semiconductores": [
+        "334410 — Fabricación de componentes electrónicos"
+      ],
+      "EEE-03 — Equipo eléctrico que incluye Inversores y Convertidores de corriente": [
+        "335999 — Fabricación de otros equipos eléctricos"
+      ],
+      "EEE-04 — Conectores": [
+        "335920 — Fabricación de cables de conducción eléctrica"
+      ],
+      "EEE-05 — Iluminación": [
+        "335120 — Fabricación de lámparas y luminarias"
+      ]
+    }
+  },
+  "AYD — Aeronáutica y Defensa": {
+    "subs": [
+      "AYD-01 — Equipo Original de Aeronaves",
+      "AYD-02 — Sub-ensambles y componentes de Aeroestructuras",
+      "AYD-03 — Sistemas y Motores",
+      "AYD-04 — Interiores de Aeronaves",
+      "AYD-05 — Reparación, Mantenimiento y Overhaul (MRO)",
+      "AYD-06 — Defensa y Seguridad",
+      "AYD-07 — Aviación General",
+      "AYD-08 — Espacial"
+    ],
+    "acts": [
+      "336410 — Fabricación de equipo aeroespacial",
+      "488190 — Otros servicios relacionados con el transporte aéreo"
+    ],
+    "sub_map": {
+      "AYD-01 — Equipo Original de Aeronaves": ["336410 — Fabricación de equipo aeroespacial"],
+      "AYD-02 — Sub-ensambles y componentes de Aeroestructuras": ["336410 — Fabricación de equipo aeroespacial"],
+      "AYD-03 — Sistemas y Motores": ["336410 — Fabricación de equipo aeroespacial"],
+      "AYD-04 — Interiores de Aeronaves": ["336410 — Fabricación de equipo aeroespacial"],
+      "AYD-05 — Reparación, Mantenimiento y Overhaul (MRO)": ["488190 — Otros servicios relacionados con el transporte aéreo"],
+      "AYD-06 — Defensa y Seguridad": ["336410 — Fabricación de equipo aeroespacial"],
+      "AYD-07 — Aviación General": ["336410 — Fabricación de equipo aeroespacial"],
+      "AYD-08 — Espacial": ["336410 — Fabricación de equipo aeroespacial"]
+    }
+  },
+  "AYT — Automotriz y Transporte": {
+    "subs": [
+      "AYT-01 — Vehículos Ligeros (Autos y Camionetas)",
+      "AYT-02 — Vehículos Pesados y Camiones",
+      "AYT-03 — Autobuses y Pasajeros",
+      "AYT-04 — Remolques y Semirremolques",
+      "AYT-05 — Vehículos Especiales (Ambulancias, Limpieza)",
+      "AYT-06 — Ferrocarril y Equipo Ferroviario",
+      "AYT-07 — Motocicletas y Vehículos Ligeros",
+      "AYT-08 — Equipo de Transporte de Carga Especializado",
+      "AYT-09 — Partes y Estampados para Carrocería",
+      "AYT-10 — Motor, Transmisión y Tren Motriz",
+      "AYT-11 — Chasis, Suspensión y Frenos",
+      "AYT-12 — Interiores, Asientos y Acabados",
+      "AYT-13 — Eléctrico, Electrónico e Iluminación Automotriz",
+      "AYT-14 — Llantas, Rines y Hule para Automoción",
+      "AYT-15 — Vidrio y Cristales Automotrices"
+    ],
+    "acts": [
+      "336110 — Fabricación de automóviles y camiones ligeros",
+      "336210 — Fabricación de carrocerías y remolques",
+      "336310 — Fabricación de motores y sus partes para vehículos automotores",
+      "336320 — Fabricación de equipo eléctrico y electrónico para vehículos automotores",
+      "336330 — Fabricación de partes de sistemas de dirección y de suspensión para vehículos automotores",
+      "336340 — Fabricación de sistemas de frenos para vehículos automotores",
+      "336350 — Fabricación de sistemas de transmisión para vehículos automotores",
+      "336360 — Fabricación de asientos y acesorios interiores para vehículos automotores",
+      "336370 — Fabricación de piezas metálicas troqueladas para vehículos automotores",
+      "336390 — Fabricación de otras partes para vehículos automotores",
+      "326211 — Fabricación de llantas y cámaras",
+      "327216 — Fabricación de vidrio automotriz"
+    ],
+    "sub_map": {
+      "AYT-01 — Vehículos Ligeros (Autos y Camionetas)": ["336110 — Fabricación de automóviles y camiones ligeros"],
+      "AYT-02 — Vehículos Pesados y Camiones": ["336110 — Fabricación de automóviles y camiones ligeros"],
+      "AYT-04 — Remolques y Semirremolques": ["336210 — Fabricación de carrocerías y remolques"],
+      "AYT-09 — Partes y Estampados para Carrocería": ["336370 — Fabricación de piezas metálicas troqueladas para vehículos automotores"],
+      "AYT-10 — Motor, Transmisión y Tren Motriz": ["336310 — Fabricación de motores y sus partes para vehículos automotores", "336350 — Fabricación de sistemas de transmisión para vehículos automotores"],
+      "AYT-11 — Chasis, Suspensión y Frenos": ["336330 — Fabricación de partes de sistemas de dirección y de suspensión para vehículos automotores", "336340 — Fabricación de sistemas de frenos para vehículos automotores"],
+      "AYT-12 — Interiores, Asientos y Acabados": ["336360 — Fabricación de asientos y acesorios interiores para vehículos automotores"],
+      "AYT-13 — Eléctrico, Electrónico e Iluminación Automotriz": ["336320 — Fabricación de equipo eléctrico y electrónico para vehículos automotores"],
+      "AYT-14 — Llantas, Rines y Hule para Automoción": ["326211 — Fabricación de llantas y cámaras"],
+      "AYT-15 — Vidrio y Cristales Automotrices": ["327216 — Fabricación de vidrio automotriz"]
+    }
+  },
+  "MIP — Maquinaria Industrial y Equipo Pesado": {
+    "subs": [
+      "MIP-01 — Maquinaria de Construcción y Maquinaria Pesada",
+      "MIP-02 — Maquinaria para Minería y Extracción",
+      "MIP-03 — Maquinaria para Manejo de Materiales y Logística",
+      "MIP-04 — Maquinaria para la Industria del Plástico y Hule",
+      "MIP-05 — Maquinaria para la Industria Textil y del Calzado",
+      "MIP-06 — Maquinaria para la Industria del Papel y Cartón",
+      "MIP-07 — Maquinaria para la Industria de Alimentos y Bebidas",
+      "MIP-08 — Maquinaria Metalmecánica y Máquinas Herramienta",
+      "MIP-09 — Equipos de Elevación y Grúas Industriales"
+    ],
+    "acts": [
+      "333120 — Fabricación de maquinaria y equipo para la construcción",
+      "333130 — Fabricación de maquinaria y equipo para la minería",
+      "333920 — Fabricación de maquinaria y equipo para levantar y trasladar",
+      "333220 — Fabricación de maquinaria y equipo para la industria del plástico y del hule",
+      "333242 — Fabricación de maquinaria y equipo para la industria editorial y del papel",
+      "333241 — Fabricación de maquinaria y equipo para la industria alimentaria y de bebidas",
+      "333510 — Fabricación de máquinas herramienta para labrar metales"
+    ],
+    "sub_map": {
+      "MIP-01 — Maquinaria de Construcción y Maquinaria Pesada": ["333120 — Fabricación de maquinaria y equipo para la construcción"],
+      "MIP-02 — Maquinaria para Minería y Extracción": ["333130 — Fabricación de maquinaria y equipo para la minería"],
+      "MIP-03 — Maquinaria para Manejo de Materiales y Logística": ["333920 — Fabricación de maquinaria y equipo para levantar y trasladar"],
+      "MIP-04 — Maquinaria para la Industria del Plástico y Hule": ["333220 — Fabricación de maquinaria y equipo para la industria del plástico y del hule"],
+      "MIP-06 — Maquinaria para la Industria del Papel y Cartón": ["333242 — Fabricación de maquinaria y equipo para la industria editorial y del papel"],
+      "MIP-07 — Maquinaria para la Industria de Alimentos y Bebidas": ["333241 — Fabricación de maquinaria y equipo para la industria alimentaria y de bebidas"],
+      "MIP-08 — Maquinaria Metalmecánica y Máquinas Herramienta": ["333510 — Fabricación de máquinas herramienta para labrar metales"]
+    }
+  },
+  "EAR — Equipo Agrícola, Pecuario, Sistemas de Riego y Jardinería": {
+    "subs": [
+      "EAR-01 — Maquinaria y Equipo Agrícola",
+      "EAR-02 — Sistemas de Riego y Manejo de Agua Agrícola",
+      "EAR-03 — Equipo Pecuario y Ganadero",
+      "EAR-04 — Equipo de Jardinería y Áreas Verdes"
+    ],
+    "acts": [
+      "333111 — Fabricación de maquinaria y equipo agrícola",
+      "333112 — Fabricación de cosechadoras y tractores agrícolas"
+    ],
+    "sub_map": {
+      "EAR-01 — Maquinaria y Equipo Agrícola": ["333111 — Fabricación de maquinaria y equipo agrícola", "333112 — Fabricación de cosechadoras y tractores agrícolas"]
+    }
+  },
+  "APG — Agricultura, Pesca, Gandería": {
+    "subs": [
+      "APG-01 — Cultivo de Granos y Semillas",
+      "APG-02 — Fruticultura y Hortalizas",
+      "APG-03 — Ganadería y Producción Pecuaria",
+      "APG-04 — Pesca y Acuacultura"
+    ],
+    "acts": [
+      "111110 — Cultivo de soya, cártamo, girasol y otros granos",
+      "111210 — Cultivo de hortalizas",
+      "112110 — Explotación de bovinos para la producción de carne",
+      "112120 — Explotación de bovinos para la producción de leche"
+    ],
+    "sub_map": {
+      "APG-01 — Cultivo de Granos y Semillas": ["111110 — Cultivo de soya, cártamo, girasol y otros granos"],
+      "APG-02 — Fruticultura y Hortalizas": ["111210 — Cultivo de hortalizas"],
+      "APG-03 — Ganadería y Producción Pecuaria": ["112110 — Explotación de bovinos para la producción de carne", "112120 — Explotación de bovinos para la producción de leche"]
+    }
+  },
+  "EYC — Edificación y Construcción": {
+    "subs": [
+      "EYC-01 — Edificación Residencial y Comercial",
+      "EYC-02 — Infraestructura Vial y Carretera",
+      "EYC-03 — Obras Hidráulicas y Marítimas",
+      "EYC-04 — Estructuras Metálicas para Construcción",
+      "EYC-05 — Instalaciones Especiales en Edificación"
+    ],
+    "acts": [
+      "236110 — Edificación de vivienda unifamiliar y multifamiliar",
+      "236220 — Edificación no residencial",
+      "237310 — Construcción de vías de comunicación",
+      "238110 — Trabajos de cimentación y estructuras de concreto",
+      "238120 — Montaje de estructuras metálicas"
+    ],
+    "sub_map": {
+      "EYC-01 — Edificación Residencial y Comercial": ["236110 — Edificación de vivienda unifamiliar y multifamiliar", "236220 — Edificación no residencial"],
+      "EYC-02 — Infraestructura Vial y Carretera": ["237310 — Construcción de vías de comunicación"],
+      "EYC-04 — Estructuras Metálicas para Construcción": ["238120 — Montaje de estructuras metálicas"]
+    }
+  },
+  "FME — Fabriciones Metálicas": {
+    "subs": [
+      "FME-01 — Pailería y Soldadura Estructural",
+      "FME-02 — Troquelado, Estampado y Corte de Lámina",
+      "FME-03 — Maquinados de Precisión y Tornería",
+      "FME-04 — Tratamientos Térmicos y Recubrimientos Metálicos",
+      "FME-05 — Forja y Fundición de Metales",
+      "FME-06 — Ensamble Metálico Especializado"
+    ],
+    "acts": [
+      "332310 — Fabricación de estructuras metálicas y tanques industriales",
+      "332710 — Maquinado de piezas industriales y tornillos",
+      "332810 — Recubrimientos reales y tratamientos térmicos a piezas metálicas",
+      "332110 — Forja y troquelado de piezas metálicas"
+    ],
+    "sub_map": {
+      "FME-01 — Pailería y Soldadura Estructural": ["332310 — Fabricación de estructuras metálicas y tanques industriales"],
+      "FME-02 — Troquelado, Estampado y Corte de Lámina": ["332110 — Forja y troquelado de piezas metálicas"],
+      "FME-03 — Maquinados de Precisión y Tornería": ["332710 — Maquinado de piezas industriales y tornillos"],
+      "FME-04 — Tratamientos Térmicos y Recubrimientos Metálicos": ["332810 — Recubrimientos reales y tratamientos térmicos a piezas metálicas"]
+    }
+  },
+  "PAM — Procesamiento de Alimentos y Manufactura Especializada": {
+    "subs": [
+      "PAM-01 — Procesamiento de Carnes y Embutidos",
+      "PAM-02 — Procesamiento de Lácteos y Quesos",
+      "PAM-03 — Panificación y Galletas Industrializadas",
+      "PAM-04 — Procesamiento de Frutas, Vegetales y Bebidas",
+      "PAM-05 — Fabricación de Envases y Empaques Plásticos",
+      "PAM-06 — Manufactura Química y Farmacéutica Especializada"
+    ],
+    "acts": [
+      "311110 — Elaboración de alimentos para animales",
+      "311210 — Molienda de trigo, maíz y cereales",
+      "311510 — Elaboración de leche y derivados lácteos",
+      "311610 — Matanza, empacado y procesamiento de carne",
+      "311810 — Elaboración de pan y galletas",
+      "312110 — Elaboración de bebidas no alcohólicas y refrescos",
+      "312120 — Elaboración de cerveza y malta",
+      "325110 — Fabricación de petroquímicos básicos",
+      "325410 — Fabricación de productos farmacéuticos",
+      "326110 — Fabricación de bolsas y películas plásticas"
+    ],
+    "sub_map": {
+      "PAM-01 — Procesamiento de Carnes y Embutidos": ["311610 — Matanza, empacado y procesamiento de carne"],
+      "PAM-02 — Procesamiento de Lácteos y Quesos": ["311510 — Elaboración de leche y derivados lácteos"],
+      "PAM-03 — Panificación y Galletas Industrializadas": ["311810 — Elaboración de pan y galletas"],
+      "PAM-04 — Procesamiento de Frutas, Vegetales y Bebidas": ["312110 — Elaboración de bebidas no alcohólicas y refrescos", "312120 — Elaboración de cerveza y malta"],
+      "PAM-05 — Fabricación de Envases y Empaques Plásticos": ["326110 — Fabricación de bolsas y películas plásticas"],
+      "PAM-06 — Manufactura Química y Farmacéutica Especializada": ["325110 — Fabricación de petroquímicos básicos", "325410 — Fabricación de productos farmacéuticos"]
+    }
+  },
+  "SYM — Salud y Medicina": {
+    "subs": [
+      "SYM-01 — Dispositivos Médicos y Equipo Hospitalario",
+      "SYM-02 — Mobiliario Médico y Quirúrgico",
+      "SYM-03 — Instrumental Quirúrgico y de Diagnóstico"
+    ],
+    "acts": ["339110 — Fabricación de equipo, instrumental y suministros médicos"],
+    "sub_map": {
+      "SYM-01 — Dispositivos Médicos y Equipo Hospitalario": ["339110 — Fabricación de equipo, instrumental y suministros médicos"]
+    }
+  },
+  "MRO — Mantenimiento MRO": {
+    "subs": [
+      "MRO-01 — Mantenimiento Industrial General MRO",
+      "MRO-02 — Servicios de Reparación y Overhaul Mecánico",
+      "MRO-03 — Suministros MRO y Consumibles de Planta"
+    ],
+    "acts": ["541330 — Servicios de ingeniería y servicios relacionados"],
+    "sub_map": {
+      "MRO-01 — Mantenimiento Industrial General MRO": ["541330 — Servicios de ingeniería y servicios relacionados"]
+    }
+  },
+  "ELA — Electrodomésticos, Línea Blanca y Aires Acondicionados Compactos": {
+    "subs": [
+      "ELA-01 — Ensamble de Electrodomésticos y Línea Blanca",
+      "ELA-02 — Equipos de Aire Acondicionado y Refrigeración Compacta"
+    ],
+    "acts": ["335220 — Fabricación de enseres electrodomésticos mayores"],
+    "sub_map": {
+      "ELA-01 — Ensamble de Electrodomésticos y Línea Blanca": ["335220 — Fabricación de enseres electrodomésticos mayores"]
+    }
+  },
+  "MUE — Muebles y Maderas": {
+    "subs": [
+      "MUE-01 — Fabricación de Muebles Metálicos y de Madera",
+      "MUE-02 — Muebles para Oficina y Comercio"
+    ],
+    "acts": ["337120 — Fabricación de muebles para el hogar y oficina"],
+    "sub_map": {
+      "MUE-01 — Fabricación de Muebles Metálicos y de Madera": ["337120 — Fabricación de muebles para el hogar y oficina"]
+    }
+  },
+  "MAR — Marina y Construcción Naval": {
+    "subs": [
+      "MAR-01 — Astilleros y Construcción Naval",
+      "MAR-02 — Mantenimiento y Reparación Marítima"
+    ],
+    "acts": ["336611 — Astilleros y construcción de embarcaciones"],
+    "sub_map": {
+      "MAR-01 — Astilleros y Construcción Naval": ["336611 — Astilleros y construcción de embarcaciones"]
+    }
+  },
+  "CME — Comercio al por menor": {
+    "subs": ["CME-01 — Tiendas de Autoservicio y Ferreterías al por Menor"],
+    "acts": [], "sub_map": {}
+  },
+  "CMA — Comercio al por mayor": {
+    "subs": ["CMA-01 — Distribuidores Mayoristas e Importadores Industriales"],
+    "acts": [], "sub_map": {}
+  },
+  "MIN — Minería": {
+    "subs": [
+      "MIN-01 — Minería de Metales Preciosos e Industriales",
+      "MIN-02 — Extracción de Minerales No Metálicos y Canteras"
+    ],
+    "acts": [
+      "212210 — Minería de mineral de hierro",
+      "212220 — Minería de oro y plata"
+    ],
+    "sub_map": {
+      "MIN-01 — Minería de Metales Preciosos e Industriales": ["212210 — Minería de mineral de hierro", "212220 — Minería de oro y plata"]
+    }
+  },
+  "PYC — Papel, Cartón y productos derivados": {
+    "subs": [
+      "PYC-01 — Fabricación de Cajas de Cartón y Empaques",
+      "PYC-02 — Fabricación de Papel y Celulosa"
+    ],
+    "acts": [
+      "322110 — Fabricación de pulpa, papel y cartón",
+      "322210 — Fabricación de cajas y empaques de cartón corrugado"
+    ],
+    "sub_map": {
+      "PYC-01 — Fabricación de Cajas de Cartón y Empaques": ["322210 — Fabricación de cajas y empaques de cartón corrugado"],
+      "PYC-02 — Fabricación de Papel y Celulosa": ["322110 — Fabricación de pulpa, papel y cartón"]
+    }
+  },
+  "OIS — Otras Industrias y Servicios": {
+    "subs": [
+      "OIS-01 — Servicios de Ingeniería y Consultoría Técnica",
+      "OIS-02 — Otras Manufacturas Diversas"
+    ],
+    "acts": ["541330 — Servicios de ingeniería y servicios relacionados"],
+    "sub_map": {
+      "OIS-01 — Servicios de Ingeniería y Consultoría Técnica": ["541330 — Servicios de ingeniería y servicios relacionados"]
+    }
+  }
+}
 
-SUB_SEGMENTOS_LIST = [
-  "IIA-01 — Robótica y Manufactura Avanzada",
-  "IIA-02 — Plataformas IIoT (Plataformas Industriales del Internet de las Cosas)",
-  "IIA-03 — Visión Artificial",
-  "EYU-01 — Equipo de Transmisión y Distribución de energía",
-  "EYU-02 — Equipo de Transmisión y Distribución de energía",
-  "EYU-03 — Generación y Distribución de Eneregía",
-  "EYU-04 — Agua",
-  "EYU-05 — Petróleo y Gas",
-  "ENR-01 — Energía Solar",
-  "ENR-02 — Energía Eólica",
-  "ENR-03 — Almacenamiento de energía y Baterías",
-  "EEE-01 — Ensamble de PCB (Tarjetas de Circuitos)",
-  "EEE-02 — Semiconductores",
-  "EEE-03 — Equipo eléctrico que incluye Inversores y Convertidores de corriente",
-  "EEE-04 — Conectores",
-  "EEE-05 — Iluminación",
-  "AYD-01 — Equipo Original de Aeronaves",
-  "AYD-02 — Sub-ensambles y componentes de Aeroestructuras",
-  "AYD-03 — Sistemas y Motores",
-  "AYD-04 — Interiores de Aeronaves",
-  "AYD-05 — Reparación, Mantenimiento y Overhaul (MRO)",
-  "AYD-06 — Defensa y Seguridad",
-  "AYD-07 — Aviación General",
-  "AYD-08 — Espacial",
-  "AYT-01 — Vehículos Ligeros (Autos y Camionetas)",
-  "AYT-02 — Vehículos Pesados y Camiones",
-  "AYT-03 — Autobuses y Pasajeros",
-  "AYT-04 — Remolques y Semirremolques",
-  "AYT-05 — Vehículos Especiales (Ambulancias, Limpieza)",
-  "AYT-06 — Ferrocarril y Equipo Ferroviario",
-  "AYT-07 — Motocicletas y Vehículos Ligeros",
-  "AYT-08 — Equipo de Transporte de Carga Especializado",
-  "AYT-09 — Partes y Estampados para Carrocería",
-  "AYT-10 — Motor, Transmisión y Tren Motriz",
-  "AYT-11 — Chasis, Suspensión y Frenos",
-  "AYT-12 — Interiores, Asientos y Acabados",
-  "AYT-13 — Eléctrico, Electrónico e Iluminación Automotriz",
-  "AYT-14 — Llantas, Rines y Hule para Automoción",
-  "AYT-15 — Vidrio y Cristales Automotrices",
-  "MIP-01 — Maquinaria de Construcción y Maquinaria Pesada",
-  "MIP-02 — Maquinaria para Minería y Extracción",
-  "MIP-03 — Maquinaria para Manejo de Materiales y Logística",
-  "MIP-04 — Maquinaria para la Industria del Plástico y Hule",
-  "MIP-05 — Maquinaria para la Industria Textil y del Calzado",
-  "MIP-06 — Maquinaria para la Industria del Papel y Cartón",
-  "MIP-07 — Maquinaria para la Industria de Alimentos y Bebidas",
-  "MIP-08 — Maquinaria Metalmecánica y Máquinas Herramienta",
-  "MIP-09 — Equipos de Elevación y Grúas Industriales",
-  "EAR-01 — Maquinaria y Equipo Agrícola",
-  "EAR-02 — Sistemas de Riego y Manejo de Agua Agrícola",
-  "EAR-03 — Equipo Pecuario y Ganadero",
-  "EAR-04 — Equipo de Jardinería y Áreas Verdes",
-  "APG-01 — Cultivo de Granos y Semillas",
-  "APG-02 — Fruticultura y Hortalizas",
-  "APG-03 — Ganadería y Producción Pecuaria",
-  "APG-04 — Pesca y Acuacultura",
-  "EYC-01 — Edificación Residencial y Comercial",
-  "EYC-02 — Infraestructura Vial y Carretera",
-  "EYC-03 — Obras Hidráulicas y Marítimas",
-  "EYC-04 — Estructuras Metálicas para Construcción",
-  "EYC-05 — Instalaciones Especiales en Edificación",
-  "FME-01 — Pailería y Soldadura Estructural",
-  "FME-02 — Troquelado, Estampado y Corte de Lámina",
-  "FME-03 — Maquinados de Precisión y Tornería",
-  "FME-04 — Tratamientos Térmicos y Recubrimientos Metálicos",
-  "FME-05 — Forja y Fundición de Metales",
-  "FME-06 — Ensamble Metálico Especializado",
-  "PAM-01 — Procesamiento de Carnes y Embutidos",
-  "PAM-02 — Procesamiento de Lácteos y Quesos",
-  "PAM-03 — Panificación y Galletas Industrializadas",
-  "PAM-04 — Procesamiento de Frutas, Vegetales y Bebidas",
-  "PAM-05 — Fabricación de Envases y Empaques Plásticos",
-  "PAM-06 — Manufactura Química y Farmacéutica Especializada",
-  "SYM-01 — Dispositivos Médicos y Equipo Hospitalario",
-  "SYM-02 — Mobiliario Médico y Quirúrgico",
-  "SYM-03 — Instrumental Quirúrgico y de Diagnóstico",
-  "MRO-01 — Mantenimiento Industrial General MRO",
-  "MRO-02 — Servicios de Reparación y Overhaul Mecánico",
-  "MRO-03 — Suministros MRO y Consumibles de Planta",
-  "ELA-01 — Ensamble de Electrodomésticos y Línea Blanca",
-  "ELA-02 — Equipos de Aire Acondicionado y Refrigeración Compacta",
-  "MUE-01 — Fabricación de Muebles Metálicos y de Madera",
-  "MUE-02 — Muebles para Oficina y Comercio",
-  "MAR-01 — Astilleros y Construcción Naval",
-  "MAR-02 — Mantenimiento y Reparación Marítima",
-  "CME-01 — Tiendas de Autoservicio y Ferreterías al por Menor",
-  "CMA-01 — Distribuidores Mayoristas e Importadores Industriales",
-  "MIN-01 — Minería de Metales Preciosos e Industriales",
-  "MIN-02 — Extracción de Minerales No Metálicos y Canteras",
-  "PYC-01 — Fabricación de Cajas de Cartón y Empaques",
-  "PYC-02 — Fabricación de Papel y Celulosa",
-  "OIS-01 — Servicios de Ingeniería y Consultoría Técnica",
-  "OIS-02 — Otras Manufacturas Diversas"
-]
-
-ACTIVIDADES_ECONOMICAS_LIST = [
-  "333999 — Fabricación de otra maquinaria y equipo para la industria en general",
-  "334519 — Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico",
-  "333249 — Fabricación de maquinaria y equipo para otras industrias manufactureras",
-  "335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica",
-  "335311 — Fabricación de motores y generadores eléctricos",
-  "221111 — Generación de electricidad a partir de combustibles fósiles",
-  "221112 — Generación de electricidad a partir de energía hidráulica",
-  "221122 — Distribución de energía eléctrica",
-  "221119 — Generación de electricidad a partir de otro tipo de energía",
-  "221121 — Transmisión de energía eléctrica",
-  "221123 — Comercialización de energía eléctrica",
-  "237133 — Supervisión de construcción de obras de generación y conducción de energía eléctrica y de obras para telecomunicaciones",
-  "237131 — Construcción de obras de generación y conducción de energía eléctrica",
-  "221312 — Captación, tratamiento y suministro de agua (sector público)",
-  "237111 — Construcción de obras para el tratamiento, distribución y suministro de agua y drenaje",
-  "221311 — Captación, tratamiento y suministro de agua (sector privado)",
-  "213111 — Perforación de pozos petroleros y de gas",
-  "211111 — Extracción de petróleo y gas natural asociado",
-  "324110 — Refinación de petróleo",
-  "237122 — Construcción de plantas de refinería y petroquímica",
-  "221210 — Suministro de gas natural por ductos al consumidor final",
-  "221113 — Generación de electricidad a partir de energía solar",
-  "333610 — Fabricación de motores de combustión interna, turbinas y transmisiones",
-  "221114 — Generación de electricidad a partir de energía eólica",
-  "335910 — Fabricación de acumuladores y pilas",
-  "334410 — Fabricación de componentes electrónicos",
-  "335999 — Fabricación de otros equipos eléctricos",
-  "335920 — Fabricación de cables de conducción eléctrica",
-  "335120 — Fabricación de lámparas y luminarias",
-  "336410 — Fabricación de equipo aeroespacial",
-  "488190 — Otros servicios relacionados con el transporte aéreo",
-  "336110 — Fabricación de automóviles y camiones ligeros",
-  "336210 — Fabricación de carrocerías y remolques",
-  "336310 — Fabricación de motores y sus partes para vehículos automotores",
-  "336320 — Fabricación de equipo eléctrico y electrónico para vehículos automotores",
-  "336330 — Fabricación de partes de sistemas de dirección y de suspensión para vehículos automotores",
-  "336340 — Fabricación de sistemas de frenos para vehículos automotores",
-  "336350 — Fabricación de sistemas de transmisión para vehículos automotores",
-  "336360 — Fabricación de asientos y acesorios interiores para vehículos automotores",
-  "336370 — Fabricación de piezas metálicas troqueladas para vehículos automotores",
-  "336390 — Fabricación de otras partes para vehículos automotores",
-  "326211 — Fabricación de llantas y cámaras",
-  "327216 — Fabricación de vidrio automotriz",
-  "333120 — Fabricación de maquinaria y equipo para la construcción",
-  "333130 — Fabricación de maquinaria y equipo para la minería",
-  "333920 — Fabricación de maquinaria y equipo para levantar y trasladar",
-  "333220 — Fabricación de maquinaria y equipo para la industria del plástico y del hule",
-  "333242 — Fabricación de maquinaria y equipo para la industria editorial y del papel",
-  "333241 — Fabricación de maquinaria y equipo para la industria alimentaria y de bebidas",
-  "333510 — Fabricación de máquinas herramienta para labrar metales",
-  "333111 — Fabricación de maquinaria y equipo agrícola",
-  "333112 — Fabricación de cosechadoras y tractores agrícolas",
-  "111110 — Cultivo de soya, cártamo, girasol y otros granos",
-  "111210 — Cultivo de hortalizas",
-  "112110 — Explotación de bovinos para la producción de carne",
-  "112120 — Explotación de bovinos para la producción de leche",
-  "236110 — Edificación de vivienda unifamiliar y multifamiliar",
-  "236220 — Edificación no residencial",
-  "237310 — Construcción de vías de comunicación",
-  "238110 — Trabajos de cimentación y estructuras de concreto",
-  "238120 — Montaje de estructuras metálicas",
-  "332310 — Fabricación de estructuras metálicas y tanques industriales",
-  "332710 — Maquinado de piezas industriales y tornillos",
-  "332810 — Recubrimientos reales y tratamientos térmicos a piezas metálicas",
-  "332110 — Forja y troquelado de piezas metálicas",
-  "311110 — Elaboración de alimentos para animales",
-  "311210 — Molienda de trigo, maíz y cereales",
-  "311510 — Elaboración de leche y derivados lácteos",
-  "311610 — Matanza, empacado y procesamiento de carne",
-  "311810 — Elaboración de pan y galletas",
-  "312110 — Elaboración de bebidas no alcohólicas y refrescos",
-  "312120 — Elaboración de cerveza y malta",
-  "325110 — Fabricación de petroquímicos básicos",
-  "325410 — Fabricación de productos farmacéuticos",
-  "326110 — Fabricación de bolsas y películas plásticas",
-  "339110 — Fabricación de equipo, instrumental y suministros médicos",
-  "335220 — Fabricación de enseres electrodomésticos mayores",
-  "337120 — Fabricación de muebles para el hogar y oficina",
-  "336611 — Astilleros y construcción de embarcaciones",
-  "212210 — Minería de mineral de hierro",
-  "212220 — Minería de oro y plata",
-  "322110 — Fabricación de pulpa, papel y cartón",
-  "322210 — Fabricación de cajas y empaques de cartón corrugado",
-  "541330 — Servicios de ingeniería y servicios relacionados"
-]
+MACRO_OPTS = list(HIERARCHY_DATA.keys())
 
 # Base de datos local en memoria para el prototipo
 REGISTROS_PROSPECTOS = [
@@ -231,11 +475,11 @@ REGISTROS_PROSPECTOS = [
             "email": "cgomez@indmonterrey.com",
             "telefono": "+52 81 8300 1122",
             "whatsapp": "+52 1 81 8300 1122",
-            "pais_region": "México",
+            "pais_region": "Estados Unidos",
             "notas_adicionales": "Contacto clave validado en expo.",
-            "macro_segmento": "IIA — Infraestructura Inteligente y Automatización Industrial",
-            "sub_segmento": "IIA-01 — Robótica y Manufactura Avanzada",
-            "actividad_economica": "333999 — Fabricación de otra maquinaria y equipo para la industria en general",
+            "macro_segmento": "PAM — Procesamiento de Alimentos y Manufactura Especializada",
+            "sub_segmento": "PAM-01 — Procesamiento de Carnes y Embutidos",
+            "actividad_economica": "311610 — Matanza, empacado y procesamiento de carne",
             "geografia": "Norte",
             "relevancia": "Alta",
             "tamano_empresa": "Más de $10,000,000",
@@ -258,7 +502,7 @@ TOLLGATES_DATA = {
         {"id": "email", "campo": "Email Corporativo", "tipo": "Email", "req": True, "ayuda": "Email corporativo del contacto.", "notas": ""},
         {"id": "telefono", "campo": "Teléfono Contacto", "tipo": "Teléfono", "req": False, "ayuda": "Teléfono directo o móvil.", "notas": ""},
         {"id": "whatsapp", "campo": "WhatsApp (Número)", "tipo": "Teléfono", "req": False, "ayuda": "Número con formato internacional y código de país (ej. +52 1 81 1234 5678).", "notas": ""},
-        {"id": "pais_region", "campo": "País / Región", "tipo": "Lista (picklist)", "req": True, "ayuda": "País o región donde opera el lead.", "notas": "", "opts": ["México", "Estados Unidos", "Canadá", "Centroamérica", "España"]}
+        {"id": "pais_region", "campo": "País / Región", "tipo": "Lista (picklist)", "req": True, "ayuda": "País o región donde opera el lead.", "notas": "", "opts": ["Estados Unidos", "Canadá", "México", "Centroamérica", "España"]}
       ]
     }, {
       "nombre": "Origen y Asignación",
@@ -272,9 +516,9 @@ TOLLGATES_DATA = {
     "secciones": [{
       "nombre": "Segmentación y Fit",
       "campos": [
-        {"id": "macro_segmento", "campo": "Macro Segmento", "tipo": "Lista (picklist)", "req": True, "ayuda": "Macro segmento al que pertenece el lead (Columnas A y B).", "notas": "", "opts": MACRO_SEGMENTOS_LIST},
-        {"id": "sub_segmento", "campo": "Sub-Segmento", "tipo": "Lista (picklist)", "req": False, "ayuda": "Sub-segmento específico (Columnas C y D).", "notas": "", "opts": SUB_SEGMENTOS_LIST},
-        {"id": "actividad_economica", "campo": "Actividad Económica", "tipo": "Lista (picklist)", "req": False, "ayuda": "Actividad económica detallada SCIAN (Columnas G y H).", "notas": "", "opts": ACTIVIDADES_ECONOMICAS_LIST},
+        {"id": "macro_segmento", "campo": "Macro Segmento", "tipo": "Lista (picklist)", "req": True, "ayuda": "Macro segmento al que pertenece el lead (Columnas A y B).", "notas": "", "opts": MACRO_OPTS},
+        {"id": "sub_segmento", "campo": "Sub-Segmento", "tipo": "Lista (picklist)", "req": False, "ayuda": "Sub-segmento específico (Columnas C y D).", "notas": "", "opts": []},
+        {"id": "actividad_economica", "campo": "Actividad Económica", "tipo": "Lista (picklist)", "req": False, "ayuda": "Actividad económica detallada SCIAN (Columnas G y H).", "notas": "", "opts": []},
         {"id": "geografia", "campo": "Geografía", "tipo": "Lista (picklist)", "req": True, "ayuda": "Región geográfica donde opera el cliente.", "notas": "", "opts": ["Norte", "Centro", "Bajio", "Occidente", "Golfo"]},
         {"id": "relevancia", "campo": "Relevancia del Portafolio", "tipo": "Lista (picklist)", "req": True, "ayuda": "Nivel de relevancia del portafolio.", "notas": "", "opts": ["Alta", "Media", "Baja"]},
         {"id": "tamano_empresa", "campo": "Tamaño de Empresa", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estimación del tamaño por ventas anuales.", "notas": "", "opts": [
@@ -689,7 +933,6 @@ HTML_TEMPLATE = """
                 </div>
             </div>
             <div>
-                <!-- BOTÓN PARA CREAR NUEVO PROSPECTO -->
                 <form method="POST" style="display:inline;">
                     <input type="hidden" name="action_type" value="nuevo">
                     <button type="submit" class="sf-btn-nuevo">+ Nuevo</button>
@@ -723,7 +966,6 @@ HTML_TEMPLATE = """
                             <tr>
                                 <td><input type="checkbox"></td>
                                 
-                                <!-- CLIC EN EL NOMBRE: MODO LECTURA NO EDITABLE -->
                                 <td>
                                     <form method="POST" style="display:inline;">
                                         <input type="hidden" name="action_type" value="ver_lectura">
@@ -739,16 +981,13 @@ HTML_TEMPLATE = """
                                 <td>{{ datos.get('email', '—') }}</td>
                                 <td><span style="background:#eef4fe; color:#0176d3; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">Nuevo</span></td>
                                 
-                                <!-- BOTONES DE EDITAR (PLUMA) Y BORRAR (BASURA) -->
                                 <td style="text-align: center; white-space: nowrap;">
-                                    <!-- PLUMA DE EDICIÓN -->
                                     <form method="POST" style="display:inline;">
                                         <input type="hidden" name="action_type" value="editar">
                                         <input type="hidden" name="prospecto_id" value="{{ loop.index0 }}">
                                         <button type="submit" class="sf-btn-action-icon" title="Editar prospecto">🖊️</button>
                                     </form>
                                     
-                                    <!-- BASURA PARA BORRAR -->
                                     <form method="POST" style="display:inline;" onsubmit="return confirm('¿Está seguro de borrar el prospecto {{ nombre_comp }}?');">
                                         <input type="hidden" name="action_type" value="eliminar">
                                         <input type="hidden" name="prospecto_id" value="{{ loop.index0 }}">
@@ -867,7 +1106,11 @@ HTML_TEMPLATE = """
                                                 </div>
 
                                                 {% if field['tipo'] == 'Lista (picklist)' %}
-                                                    <select name="{{ field['id'] }}" class="sf-select" {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %}>
+                                                    <select name="{{ field['id'] }}" class="sf-select"
+                                                            data-saved-val="{{ f_val }}"
+                                                            {% if field['id'] == 'macro_segmento' %}onchange="actualizarCascadaTG1(true)"{% endif %}
+                                                            {% if field['id'] == 'sub_segmento' %}onchange="actualizarCascadaTG1(false)"{% endif %}
+                                                            {% if modo_lectura %}disabled{% elif field['req'] and tg_key == active_tg %}required{% endif %}>
                                                         <option value="">--Seleccione {{ field['campo'] }}--</option>
                                                         {% if field['opts'] %}
                                                             {% for opt in field['opts'] %}
@@ -959,12 +1202,64 @@ HTML_TEMPLATE = """
 
 <script>
     const tgMetadatos = {{ tg_meta_json|safe }};
+    const HIERARCHY_DATA = {{ hierarchy_json|safe }};
     const modoLecturaGlobal = {% if modo_lectura %}true{% else %}false{% endif %};
     const unlockedIndexGlobal = {{ unlocked_idx }};
 
+    function actualizarCascadaTG1(resetChildren) {
+        const macroSelect = document.querySelector('select[name="macro_segmento"]');
+        const subSelect = document.querySelector('select[name="sub_segmento"]');
+        const actSelect = document.querySelector('select[name="actividad_economica"]');
+
+        if (!macroSelect || !subSelect || !actSelect) return;
+
+        const selMacro = macroSelect.value;
+        const savedSub = subSelect.getAttribute('data-saved-val') || "";
+        const savedAct = actSelect.getAttribute('data-saved-val') || "";
+
+        const currentSub = resetChildren ? "" : (subSelect.value || savedSub);
+        const currentAct = resetChildren ? "" : (actSelect.value || savedAct);
+
+        if (selMacro && HIERARCHY_DATA[selMacro]) {
+            const macroData = HIERARCHY_DATA[selMacro];
+            
+            // Sub-Segmentos pertenecientes al Macro
+            if (!modoLecturaGlobal) subSelect.disabled = false;
+            subSelect.innerHTML = '<option value="">--Seleccione Sub-Segmento--</option>';
+            macroData.subs.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.textContent = s;
+                if (s === currentSub) opt.selected = true;
+                subSelect.appendChild(opt);
+            });
+
+            // Actividades Económicas pertenecientes al Macro / Sub
+            let actList = macroData.acts;
+            if (subSelect.value && macroData.sub_map[subSelect.value]) {
+                actList = macroData.sub_map[subSelect.value];
+            }
+
+            if (!modoLecturaGlobal) actSelect.disabled = false;
+            actSelect.innerHTML = '<option value="">--Seleccione Actividad Económica--</option>';
+            actList.forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a;
+                opt.textContent = a;
+                if (a === currentAct) opt.selected = true;
+                actSelect.appendChild(opt);
+            });
+        } else {
+            subSelect.disabled = true;
+            subSelect.innerHTML = '<option value="">--Seleccione primero Macro Segmento--</option>';
+            actSelect.disabled = true;
+            actSelect.innerHTML = '<option value="">--Seleccione primero Macro Segmento--</option>';
+        }
+    }
+
     function activarTollgate(tgId, tgIdx) {
         if (!modoLecturaGlobal && tgIdx > unlockedIndexGlobal) {
-            return false; // En modo edición no se puede saltar hacia adelante sin 'Avanzar'
+            return false;
         }
 
         document.querySelectorAll('.tg-screen').forEach(el => el.style.display = 'none');
@@ -981,6 +1276,10 @@ HTML_TEMPLATE = """
 
         if (tgMetadatos[tgId]) {
             document.getElementById('header-objeto-fase').innerText = 'Objeto SF: ' + tgMetadatos[tgId].objeto + ' | Fase: ' + tgMetadatos[tgId].fase;
+        }
+
+        if (tgId === 'TG1') {
+            actualizarCascadaTG1(false);
         }
     }
 
@@ -1006,6 +1305,10 @@ HTML_TEMPLATE = """
         document.getElementById('dyn-telefono').innerText = telefono || '—';
         document.getElementById('dyn-email').innerText = email || '—';
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        actualizarCascadaTG1(false);
+    });
 </script>
 
 </body>
@@ -1139,6 +1442,7 @@ def home():
             mostrar_detalle = False
 
     tg_meta_json = json.dumps({k: {"objeto": v["objeto"], "fase": v["fase"]} for k, v in TOLLGATES_DATA.items()})
+    hierarchy_json = json.dumps(HIERARCHY_DATA, ensure_ascii=False)
 
     return render_template_string(
         HTML_TEMPLATE,
@@ -1151,6 +1455,7 @@ def home():
         prospecto_id=prospecto_id,
         registro_actual=registro_actual,
         tg_meta_json=tg_meta_json,
+        hierarchy_json=hierarchy_json,
         registros=REGISTROS_PROSPECTOS,
         mensaje=mensaje
     )
