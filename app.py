@@ -67,7 +67,7 @@ HIERARCHY_DATA = {
   },
   "AYT — Automotriz y Transporte": {
     "subs": ["AYT-01 — Vehículos Ligeros (Autos y Camionetas)", "AYT-02 — Vehículos Pesados y Camiones", "AYT-03 — Autobuses y Pasajeros", "AYT-04 — Remolques y Semirremolques", "AYT-05 — Vehículos Especiales (Ambulancias, Limpieza)", "AYT-06 — Ferrocarril y Equipo Ferroviario", "AYT-07 — Motocicletas y Vehículos Ligeros", "AYT-08 — Equipo de Transporte de Carga Especializado", "AYT-09 — Partes y Estampados para Carrocería", "AYT-10 — Motor, Transmisión y Tren Motriz", "AYT-11 — Chasis, Suspensión y Frenos", "AYT-12 — Interiores, Asientos y Acabados", "AYT-13 — Eléctrico, Electrónico e Iluminación Automotriz", "AYT-14 — Llantas, Rines y Hule para Automoción", "AYT-15 — Vidrio y Cristales Automotrices"],
-    "acts": ["336110 — Fabricación de automóviles y camiones ligeros", "336210 — Fabricación de carrocerías y remolques", "336310 — Fabricación de motores y sus partes para vehículos automotores", "336320 — Fabricación de equipo eléctrico y electrónico para vehículos automotores", "336330 — Fabricación de partes de sistemas de dirección y de suspensión para vehículos automotores", "336340 — Fabricación de sistemas de frenos para vehículos automotores", "336350 — Fabricación de sistemas de transmisión para vehículos automotores", "336360 — Fabricación de asientos y acesorios interiores para vehículos automotores", "336370 — Fabricación de piezas metálicas troqueladas para vehículos automotores", "336390 — Fabricación de otras partes para vehículos automotores", "326211 — Fabricación de llantas y cámaras", "327216 — Fabricación de vidrio automotriz"],
+    "acts": ["336110 — Fabricación de automóviles y camiones ligeros", "336210 — Fabricación de carrocerías y remolques", "336310 — Fabricación de motores y sus partes para vehículos automotores", "336320 — Fabricación de equipo eléctrico y electrónico para vehículos automotores", "336330 — Fabricación de partes de sistemas de dirección y de suspensión para vehículos automotores", "336340 — Fabricación de sistemas de frenos para vehículos automotores", "336350 — Fabricación de sistemas de transmission para vehículos automotores", "336360 — Fabricación de asientos y acesorios interiores para vehículos automotores", "336370 — Fabricación de piezas metálicas troqueladas para vehículos automotores", "336390 — Fabricación de otras partes para vehículos automotores", "326211 — Fabricación de llantas y cámaras", "327216 — Fabricación de vidrio automotriz"],
     "sub_map": {
       "AYT-01 — Vehículos Ligeros (Autos y Camionetas)": ["336110 — Fabricación de automóviles y camiones ligeros"],
       "AYT-02 — Vehículos Pesados y Camiones": ["336110 — Fabricación de automóviles y camiones ligeros"],
@@ -97,9 +97,7 @@ HIERARCHY_DATA = {
   "EAR — Equipo Agrícola, Pecuario, Sistemas de Riego y Jardinería": {
     "subs": ["EAR-01 — Maquinaria y Equipo Agrícola", "EAR-02 — Sistemas de Riego y Manejo de Agua Agrícola", "EAR-03 — Equipo Pecuario y Ganadero", "EAR-04 — Equipo de Jardinería y Áreas Verdes"],
     "acts": ["333111 — Fabricación de maquinaria y equipo agrícola", "333112 — Fabricación de cosechadoras y tractores agrícolas"],
-    "sub_map": {
-      "EAR-01 — Maquinaria y Equipo Agrícola": ["333111 — Fabricación de maquinaria y equipo agrícola", "333112 — Fabricación de cosechadoras y tractores agrícolas"]
-    }
+    "sub_map": {"EAR-01 — Maquinaria y Equipo Agrícola": ["333111 — Fabricación de maquinaria y equipo agrícola", "333112 — Fabricación de cosechadoras y tractores agrícolas"]}
   },
   "APG — Agricultura, Pesca, Gandería": {
     "subs": ["APG-01 — Cultivo de Granos y Semillas", "APG-02 — Fruticultura y Hortalizas", "APG-03 — Ganadería y Producción Pecuaria", "APG-04 — Pesca y Acuacultura"],
@@ -195,9 +193,10 @@ HIERARCHY_DATA = {
 }
 
 MACRO_OPTS = list(HIERARCHY_DATA.keys())
+
 REGISTROS_PROSPECTOS = []
 
-# MATRIZ COMPLETA DE TOLLGATES (TG0 A TG13)
+# --- MATRIZ COMPLETA DE TOLLGATES (TG0 A TG13) ---
 TOLLGATES_DATA = {
   "TG0": {
     "objeto": "Lead", "fase": "BD → MO",
@@ -310,7 +309,7 @@ TOLLGATES_DATA = {
     }, {
       "nombre": "Plan BSV",
       "campos": [
-        {"id": "estado_plan_bsv", "campo": "Estado del Plan BSV", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estado del Plan BSV para la oportunidad.", "notas": "", "opts": ["Sí — completado", "En proceso", "No — pendiente"]}
+        {"id": "estado_plan_bsv", "campo": "Estado del Plan BSV", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estado del Plan BSV.", "notas": "", "opts": ["Sí — completado", "En proceso", "No — pendiente"]}
       ]
     }]
   },
@@ -561,6 +560,7 @@ HTML_TEMPLATE = """
         .sf-highlight-item span { display: block; font-size: 11px; color: var(--sf-text-muted); font-weight: 600; }
         .sf-highlight-item strong { font-size: 13px; color: var(--sf-text-main); }
 
+        /* ESTILOS DE PESTAÑAS Y BLOQUEO PROGRESIVO DE CHEVRONS */
         .sf-path-bar { display: flex; background-color: #f3f3f3; padding: 8px 16px; border-bottom: 1px solid var(--sf-border); overflow-x: auto; white-space: nowrap; }
         
         .sf-chevron {
@@ -631,7 +631,7 @@ HTML_TEMPLATE = """
 
 <div class="sf-container">
 
-    <!-- VISTA 1: TABLA VISTOS RECIENTEMENTE (INICIO) -->
+    <!-- VISTA 1: TABLA VISTOS RECIENTEMENTE -->
     <div id="vista-lista" style="display: {% if mostrar_detalle %}none{% else %}block{% endif %};">
         <div class="sf-list-header">
             <div class="sf-list-title">
@@ -769,7 +769,6 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- BARRA DE CHEVRONS CON NAVEGACIÓN -->
         <div class="sf-path-bar">
             {% for tg_key in tg_keys %}
                 {% set tg_idx = loop.index0 %}
@@ -854,7 +853,6 @@ HTML_TEMPLATE = """
                         </div>
                     {% endfor %}
 
-                    <!-- ACCIONES INFERIORES -->
                     <div style="padding: 16px; text-align: right; background: #ffffff; border-top: 1px solid var(--sf-border);">
                         {% if modo_lectura %}
                             <form method="POST" style="display:inline;">
@@ -875,7 +873,6 @@ HTML_TEMPLATE = """
                     </div>
                 </div>
 
-                <!-- BARRA LATERAL DERECHA (30%) -->
                 <div class="sf-side-col">
                     <div class="sf-side-card" style="background:#fff3cd; border-color:#ffeeba;">
                         <span style="font-size:12px; color:#856404; font-weight:600;">⚠ Verificación</span>
@@ -889,16 +886,6 @@ HTML_TEMPLATE = """
                             <li style="margin-bottom:4px;"><a>Archivos (0)</a></li>
                             <li><a>Notas (0)</a></li>
                         </ul>
-                    </div>
-
-                    <div class="sf-side-card">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:13px; font-weight:700;">Archivos (0)</span>
-                            <button type="button" class="sf-btn-sub" style="padding:2px 8px; font-size:11px;">Cargar</button>
-                        </div>
-                        <div class="sf-drop-box">
-                            <span style="font-size:12px; color:#514f4d;">Suelte archivos aquí</span>
-                        </div>
                     </div>
                 </div>
 
@@ -914,13 +901,12 @@ HTML_TEMPLATE = """
     const modoLecturaGlobal = {% if modo_lectura %}true{% else %}false{% endif %};
     const unlockedIndexGlobal = {{ unlocked_idx }};
     
-    // Función CRÍTICA para evitar que los campos ocultos bloqueen el HTML Form Submit
+    // Función CRÍTICA para evitar que campos ocultos bloqueen el HTML Form Submit
     function prepararFormularioParaEnvio() {
         document.querySelectorAll('[data-req="true"]').forEach(el => {
-            el.removeAttribute('required'); // Quitamos required de todo el DOM al enviar
+            el.removeAttribute('required'); 
         });
         
-        // Volvemos a colocar required solo en la pestaña que está visible actualmente
         const activeTg = document.getElementById('current_active_tg').value;
         const pantallaTarget = document.getElementById('pantalla-' + activeTg);
         if (pantallaTarget && !modoLecturaGlobal) {
@@ -941,13 +927,28 @@ HTML_TEMPLATE = """
         const savedSub = subSelect.getAttribute('data-saved-val') || "";
         const savedAct = actSelect.getAttribute('data-saved-val') || "";
 
-        const currentSub = resetChildren ? "" : (subSelect.value || savedSub);
-        const currentAct = resetChildren ? "" : (actSelect.value || savedAct);
+        let currentSub = "";
+        let currentAct = "";
+        
+        if (resetChildren) {
+            currentSub = "";
+            currentAct = "";
+        } else {
+            if (subSelect.options.length > 1) {
+                currentSub = subSelect.value;
+            } else {
+                currentSub = savedSub;
+            }
+            if (actSelect.options.length > 1) {
+                currentAct = actSelect.value;
+            } else {
+                currentAct = savedAct;
+            }
+        }
 
         if (selMacro && HIERARCHY_DATA[selMacro]) {
             const macroData = HIERARCHY_DATA[selMacro];
             
-            // Sub-Segmentos
             if (!modoLecturaGlobal) subSelect.disabled = false;
             subSelect.innerHTML = '<option value="">--Seleccione Sub-Segmento--</option>';
             macroData.subs.forEach(s => {
@@ -958,10 +959,9 @@ HTML_TEMPLATE = """
                 subSelect.appendChild(opt);
             });
 
-            // Actividades Económicas
             let actList = macroData.acts;
-            if (subSelect.value && macroData.sub_map[subSelect.value]) {
-                actList = macroData.sub_map[subSelect.value];
+            if (currentSub && macroData.sub_map[currentSub]) {
+                actList = macroData.sub_map[currentSub];
             }
 
             if (!modoLecturaGlobal) actSelect.disabled = false;
@@ -973,11 +973,17 @@ HTML_TEMPLATE = """
                 if (a === currentAct) opt.selected = true;
                 actSelect.appendChild(opt);
             });
+            
+            subSelect.setAttribute('data-saved-val', currentSub);
+            actSelect.setAttribute('data-saved-val', currentAct);
+            
         } else {
             subSelect.disabled = true;
             subSelect.innerHTML = '<option value="">--Seleccione primero Macro Segmento--</option>';
             actSelect.disabled = true;
             actSelect.innerHTML = '<option value="">--Seleccione primero Macro Segmento--</option>';
+            subSelect.setAttribute('data-saved-val', '');
+            actSelect.setAttribute('data-saved-val', '');
         }
     }
 
@@ -1002,7 +1008,6 @@ HTML_TEMPLATE = """
             document.getElementById('header-objeto-fase').innerText = 'Objeto SF: ' + tgMetadatos[tgId].objeto + ' | Fase: ' + tgMetadatos[tgId].fase;
         }
 
-        // Aplicamos la lógica de requirimientos
         prepararFormularioParaEnvio();
 
         if (tgId === 'TG1') {
@@ -1038,7 +1043,6 @@ HTML_TEMPLATE = """
         document.getElementById('vista-lista').style.display = 'block';
     }
 
-    // Inicializar estado
     document.addEventListener('DOMContentLoaded', function() {
         activarTollgate('{{ active_tg }}', {{ unlocked_idx }});
     });
@@ -1130,45 +1134,18 @@ def home():
                 REGISTROS_PROSPECTOS.append(registro_actual)
                 prospecto_id = len(REGISTROS_PROSPECTOS) - 1
 
-            nombre = datos_capturados.get('nombre', '')
-            apellidos = datos_capturados.get('apellidos', '')
-            empresa = datos_capturados.get('empresa', '')
-
-            try:
-                from office365.runtime.auth.user_credential import UserCredential
-                from office365.sharepoint.client_context import ClientContext
-                ctx = ClientContext(SITE_URL).with_credentials(UserCredential(USERNAME, PASSWORD))
-                target_list = ctx.web.lists.get_by_title("BSV_Leads")
-                
-                target_list.add_item({
-                    "Title": f"{nombre} {apellidos}".strip(),
-                    "BSV_Empresa___Razon_Social__c": empresa,
-                    "BSV_Cargo___Titulo__c": datos_capturados.get('cargo', ''),
-                    "BSV_Email_Corporativo__c": datos_capturados.get('email', ''),
-                    "BSV_Telefono_Contacto__c": datos_capturados.get('telefono', ''),
-                    "BSV_WhatsApp__c": datos_capturados.get('whatsapp', ''),
-                    "BSV_Pais___Region__c": datos_capturados.get('pais_region', ''),
-                    "BSV_Macro_Segmento__c": datos_capturados.get('macro_segmento', ''),
-                    "BSV_Sub_Segmento__c": datos_capturados.get('sub_segmento', ''),
-                    "BSV_Actividad_Economica__c": datos_capturados.get('actividad_economica', ''),
-                    "BSV_Tamano_Empresa__c": datos_capturados.get('tamano_empresa', '')
-                })
-                ctx.execute_query()
-                # Éxito en SharePoint
-                mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
-            except Exception as e:
-                # Éxito Local
-                mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
-
+            # LÓGICA DE MENSAJE Y AVANCE
             current_idx = tg_keys.index(current_active_tg) if current_active_tg in tg_keys else 0
             if current_idx < len(tg_keys) - 1:
                 next_idx = current_idx + 1
                 unlocked_idx = max(unlocked_idx, next_idx)
                 active_tg = tg_keys[next_idx]
+                mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
             else:
                 active_tg = current_active_tg
                 mostrar_detalle = False
-                mensaje = f"¡Captura completada para {nombre} {apellidos}!"
+                nombre_c = (datos_capturados.get('nombre', '') + " " + datos_capturados.get('apellidos', '')).strip()
+                mensaje = f"¡Captura completa de los 14 Tollgates finalizada exitosamente para {nombre_c}!"
 
             registro_actual['unlocked_idx'] = unlocked_idx
             registro_actual['active_tg'] = active_tg
