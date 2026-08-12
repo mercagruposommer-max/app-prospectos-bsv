@@ -9,6 +9,215 @@ SITE_URL = "https://tu-empresa.sharepoint.com/sites/tu-sitio"
 USERNAME = "usuario@tu-empresa.com"
 PASSWORD = "TuPassword123"
 
+# --- LISTAS OFICIALES EXTRAÍDAS DEL EXCEL DE MACROSEGMENTOS LAMMSA ---
+MACRO_SEGMENTOS_LIST = [
+  "IIA — Infraestructura Inteligente y Automatización Industrial",
+  "EYU — Energía y Utilidades",
+  "ENR — Energías Renovables",
+  "EEE — Electrónica y Equipos Eléctricos",
+  "AYD — Aeronáutica y Defensa",
+  "AYT — Automotriz y Transporte",
+  "MIP — Maquinaria Industrial y Equipo Pesado",
+  "EAR — Equipo Agrícola, Pecuario, Sistemas de Riego y Jardinería",
+  "APG — Agricultura, Pesca, Gandería",
+  "EYC — Edificación y Construcción",
+  "FME — Fabriciones Metálicas",
+  "PAM — Procesamiento de Alimentos y Manufactura Especializada",
+  "SYM — Salud y Medicina",
+  "MRO — Mantenimiento MRO",
+  "ELA — Electrodomésticos, Línea Blanca y Aires Acondicionados Compactos",
+  "MUE — Muebles y Maderas",
+  "MAR — Marina y Construcción Naval",
+  "CME — Comercio al por menor",
+  "CMA — Comercio al por mayor",
+  "MIN — Minería",
+  "PYC — Papel, Cartón y productos derivados",
+  "OIS — Otras Industrias y Servicios"
+]
+
+SUB_SEGMENTOS_LIST = [
+  "IIA-01 — Robótica y Manufactura Avanzada",
+  "IIA-02 — Plataformas IIoT (Plataformas Industriales del Internet de las Cosas)",
+  "IIA-03 — Visión Artificial",
+  "EYU-01 — Equipo de Transmisión y Distribución de energía",
+  "EYU-02 — Equipo de Transmisión y Distribución de energía",
+  "EYU-03 — Generación y Distribución de Eneregía",
+  "EYU-04 — Agua",
+  "EYU-05 — Petróleo y Gas",
+  "ENR-01 — Energía Solar",
+  "ENR-02 — Energía Eólica",
+  "ENR-03 — Almacenamiento de energía y Baterías",
+  "EEE-01 — Ensamble de PCB (Tarjetas de Circuitos)",
+  "EEE-02 — Semiconductores",
+  "EEE-03 — Equipo eléctrico que incluye Inversores y Convertidores de corriente",
+  "EEE-04 — Conectores",
+  "EEE-05 — Iluminación",
+  "AYD-01 — Equipo Original de Aeronaves",
+  "AYD-02 — Sub-ensambles y componentes de Aeroestructuras",
+  "AYD-03 — Sistemas y Motores",
+  "AYD-04 — Interiores de Aeronaves",
+  "AYD-05 — Reparación, Mantenimiento y Overhaul (MRO)",
+  "AYD-06 — Defensa y Seguridad",
+  "AYD-07 — Aviación General",
+  "AYD-08 — Espacial",
+  "AYT-01 — Vehículos Ligeros (Autos y Camionetas)",
+  "AYT-02 — Vehículos Pesados y Camiones",
+  "AYT-03 — Autobuses y Pasajeros",
+  "AYT-04 — Remolques y Semirremolques",
+  "AYT-05 — Vehículos Especiales (Ambulancias, Limpieza)",
+  "AYT-06 — Ferrocarril y Equipo Ferroviario",
+  "AYT-07 — Motocicletas y Vehículos Ligeros",
+  "AYT-08 — Equipo de Transporte de Carga Especializado",
+  "AYT-09 — Partes y Estampados para Carrocería",
+  "AYT-10 — Motor, Transmisión y Tren Motriz",
+  "AYT-11 — Chasis, Suspensión y Frenos",
+  "AYT-12 — Interiores, Asientos y Acabados",
+  "AYT-13 — Eléctrico, Electrónico e Iluminación Automotriz",
+  "AYT-14 — Llantas, Rines y Hule para Automoción",
+  "AYT-15 — Vidrio y Cristales Automotrices",
+  "MIP-01 — Maquinaria de Construcción y Maquinaria Pesada",
+  "MIP-02 — Maquinaria para Minería y Extracción",
+  "MIP-03 — Maquinaria para Manejo de Materiales y Logística",
+  "MIP-04 — Maquinaria para la Industria del Plástico y Hule",
+  "MIP-05 — Maquinaria para la Industria Textil y del Calzado",
+  "MIP-06 — Maquinaria para la Industria del Papel y Cartón",
+  "MIP-07 — Maquinaria para la Industria de Alimentos y Bebidas",
+  "MIP-08 — Maquinaria Metalmecánica y Máquinas Herramienta",
+  "MIP-09 — Equipos de Elevación y Grúas Industriales",
+  "EAR-01 — Maquinaria y Equipo Agrícola",
+  "EAR-02 — Sistemas de Riego y Manejo de Agua Agrícola",
+  "EAR-03 — Equipo Pecuario y Ganadero",
+  "EAR-04 — Equipo de Jardinería y Áreas Verdes",
+  "APG-01 — Cultivo de Granos y Semillas",
+  "APG-02 — Fruticultura y Hortalizas",
+  "APG-03 — Ganadería y Producción Pecuaria",
+  "APG-04 — Pesca y Acuacultura",
+  "EYC-01 — Edificación Residencial y Comercial",
+  "EYC-02 — Infraestructura Vial y Carretera",
+  "EYC-03 — Obras Hidráulicas y Marítimas",
+  "EYC-04 — Estructuras Metálicas para Construcción",
+  "EYC-05 — Instalaciones Especiales en Edificación",
+  "FME-01 — Pailería y Soldadura Estructural",
+  "FME-02 — Troquelado, Estampado y Corte de Lámina",
+  "FME-03 — Maquinados de Precisión y Tornería",
+  "FME-04 — Tratamientos Térmicos y Recubrimientos Metálicos",
+  "FME-05 — Forja y Fundición de Metales",
+  "FME-06 — Ensamble Metálico Especializado",
+  "PAM-01 — Procesamiento de Carnes y Embutidos",
+  "PAM-02 — Procesamiento de Lácteos y Quesos",
+  "PAM-03 — Panificación y Galletas Industrializadas",
+  "PAM-04 — Procesamiento de Frutas, Vegetales y Bebidas",
+  "PAM-05 — Fabricación de Envases y Empaques Plásticos",
+  "PAM-06 — Manufactura Química y Farmacéutica Especializada",
+  "SYM-01 — Dispositivos Médicos y Equipo Hospitalario",
+  "SYM-02 — Mobiliario Médico y Quirúrgico",
+  "SYM-03 — Instrumental Quirúrgico y de Diagnóstico",
+  "MRO-01 — Mantenimiento Industrial General MRO",
+  "MRO-02 — Servicios de Reparación y Overhaul Mecánico",
+  "MRO-03 — Suministros MRO y Consumibles de Planta",
+  "ELA-01 — Ensamble de Electrodomésticos y Línea Blanca",
+  "ELA-02 — Equipos de Aire Acondicionado y Refrigeración Compacta",
+  "MUE-01 — Fabricación de Muebles Metálicos y de Madera",
+  "MUE-02 — Muebles para Oficina y Comercio",
+  "MAR-01 — Astilleros y Construcción Naval",
+  "MAR-02 — Mantenimiento y Reparación Marítima",
+  "CME-01 — Tiendas de Autoservicio y Ferreterías al por Menor",
+  "CMA-01 — Distribuidores Mayoristas e Importadores Industriales",
+  "MIN-01 — Minería de Metales Preciosos e Industriales",
+  "MIN-02 — Extracción de Minerales No Metálicos y Canteras",
+  "PYC-01 — Fabricación de Cajas de Cartón y Empaques",
+  "PYC-02 — Fabricación de Papel y Celulosa",
+  "OIS-01 — Servicios de Ingeniería y Consultoría Técnica",
+  "OIS-02 — Otras Manufacturas Diversas"
+]
+
+ACTIVIDADES_ECONOMICAS_LIST = [
+  "333999 — Fabricación de otra maquinaria y equipo para la industria en general",
+  "334519 — Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico",
+  "333249 — Fabricación de maquinaria y equipo para otras industrias manufactureras",
+  "335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica",
+  "335311 — Fabricación de motores y generadores eléctricos",
+  "221111 — Generación de electricidad a partir de combustibles fósiles",
+  "221112 — Generación de electricidad a partir de energía hidráulica",
+  "221122 — Distribución de energía eléctrica",
+  "221119 — Generación de electricidad a partir de otro tipo de energía",
+  "221121 — Transmisión de energía eléctrica",
+  "221123 — Comercialización de energía eléctrica",
+  "237133 — Supervisión de construcción de obras de generación y conducción de energía eléctrica y de obras para telecomunicaciones",
+  "237131 — Construcción de obras de generación y conducción de energía eléctrica",
+  "221312 — Captación, tratamiento y suministro de agua (sector público)",
+  "237111 — Construcción de obras para el tratamiento, distribución y suministro de agua y drenaje",
+  "221311 — Captación, tratamiento y suministro de agua (sector privado)",
+  "213111 — Perforación de pozos petroleros y de gas",
+  "211111 — Extracción de petróleo y gas natural asociado",
+  "324110 — Refinación de petróleo",
+  "237122 — Construcción de plantas de refinería y petroquímica",
+  "221210 — Suministro de gas natural por ductos al consumidor final",
+  "221113 — Generación de electricidad a partir de energía solar",
+  "333610 — Fabricación de motores de combustión interna, turbinas y transmisiones",
+  "221114 — Generación de electricidad a partir de energía eólica",
+  "335910 — Fabricación de acumuladores y pilas",
+  "334410 — Fabricación de componentes electrónicos",
+  "335999 — Fabricación de otros equipos eléctricos",
+  "335920 — Fabricación de cables de conducción eléctrica",
+  "335120 — Fabricación de lámparas y luminarias",
+  "336410 — Fabricación de equipo aeroespacial",
+  "488190 — Otros servicios relacionados con el transporte aéreo",
+  "336110 — Fabricación de automóviles y camiones ligeros",
+  "336210 — Fabricación de carrocerías y remolques",
+  "336310 — Fabricación de motores y sus partes para vehículos automotores",
+  "336320 — Fabricación de equipo eléctrico y electrónico para vehículos automotores",
+  "336330 — Fabricación de partes de sistemas de dirección y de suspensión para vehículos automotores",
+  "336340 — Fabricación de sistemas de frenos para vehículos automotores",
+  "336350 — Fabricación de sistemas de transmisión para vehículos automotores",
+  "336360 — Fabricación de asientos y acesorios interiores para vehículos automotores",
+  "336370 — Fabricación de piezas metálicas troqueladas para vehículos automotores",
+  "336390 — Fabricación de otras partes para vehículos automotores",
+  "326211 — Fabricación de llantas y cámaras",
+  "327216 — Fabricación de vidrio automotriz",
+  "333120 — Fabricación de maquinaria y equipo para la construcción",
+  "333130 — Fabricación de maquinaria y equipo para la minería",
+  "333920 — Fabricación de maquinaria y equipo para levantar y trasladar",
+  "333220 — Fabricación de maquinaria y equipo para la industria del plástico y del hule",
+  "333242 — Fabricación de maquinaria y equipo para la industria editorial y del papel",
+  "333241 — Fabricación de maquinaria y equipo para la industria alimentaria y de bebidas",
+  "333510 — Fabricación de máquinas herramienta para labrar metales",
+  "333111 — Fabricación de maquinaria y equipo agrícola",
+  "333112 — Fabricación de cosechadoras y tractores agrícolas",
+  "111110 — Cultivo de soya, cártamo, girasol y otros granos",
+  "111210 — Cultivo de hortalizas",
+  "112110 — Explotación de bovinos para la producción de carne",
+  "112120 — Explotación de bovinos para la producción de leche",
+  "236110 — Edificación de vivienda unifamiliar y multifamiliar",
+  "236220 — Edificación no residencial",
+  "237310 — Construcción de vías de comunicación",
+  "238110 — Trabajos de cimentación y estructuras de concreto",
+  "238120 — Montaje de estructuras metálicas",
+  "332310 — Fabricación de estructuras metálicas y tanques industriales",
+  "332710 — Maquinado de piezas industriales y tornillos",
+  "332810 — Recubrimientos reales y tratamientos térmicos a piezas metálicas",
+  "332110 — Forja y troquelado de piezas metálicas",
+  "311110 — Elaboración de alimentos para animales",
+  "311210 — Molienda de trigo, maíz y cereales",
+  "311510 — Elaboración de leche y derivados lácteos",
+  "311610 — Matanza, empacado y procesamiento de carne",
+  "311810 — Elaboración de pan y galletas",
+  "312110 — Elaboración de bebidas no alcohólicas y refrescos",
+  "312120 — Elaboración de cerveza y malta",
+  "325110 — Fabricación de petroquímicos básicos",
+  "325410 — Fabricación de productos farmacéuticos",
+  "326110 — Fabricación de bolsas y películas plásticas",
+  "339110 — Fabricación de equipo, instrumental y suministros médicos",
+  "335220 — Fabricación de enseres electrodomésticos mayores",
+  "337120 — Fabricación de muebles para el hogar y oficina",
+  "336611 — Astilleros y construcción de embarcaciones",
+  "212210 — Minería de mineral de hierro",
+  "212220 — Minería de oro y plata",
+  "322110 — Fabricación de pulpa, papel y cartón",
+  "322210 — Fabricación de cajas y empaques de cartón corrugado",
+  "541330 — Servicios de ingeniería y servicios relacionados"
+]
+
 # Base de datos local en memoria para el prototipo
 REGISTROS_PROSPECTOS = [
     {
@@ -24,9 +233,9 @@ REGISTROS_PROSPECTOS = [
             "whatsapp": "+52 1 81 8300 1122",
             "pais_region": "México",
             "notas_adicionales": "Contacto clave validado en expo.",
-            "macro_segmento": "Industrial y Manufactura",
-            "sub_segmento": "Manufactura de Plásticos",
-            "actividad_economica": "Transformación / Producción",
+            "macro_segmento": "IIA — Infraestructura Inteligente y Automatización Industrial",
+            "sub_segmento": "IIA-01 — Robótica y Manufactura Avanzada",
+            "actividad_economica": "333999 — Fabricación de otra maquinaria y equipo para la industria en general",
             "geografia": "Norte",
             "relevancia": "Alta",
             "tamano_empresa": "Más de $10,000,000",
@@ -49,7 +258,7 @@ TOLLGATES_DATA = {
         {"id": "email", "campo": "Email Corporativo", "tipo": "Email", "req": True, "ayuda": "Email corporativo del contacto.", "notas": ""},
         {"id": "telefono", "campo": "Teléfono Contacto", "tipo": "Teléfono", "req": False, "ayuda": "Teléfono directo o móvil.", "notas": ""},
         {"id": "whatsapp", "campo": "WhatsApp (Número)", "tipo": "Teléfono", "req": False, "ayuda": "Número con formato internacional y código de país (ej. +52 1 81 1234 5678).", "notas": ""},
-        {"id": "pais_region", "campo": "País / Región", "tipo": "Lista (picklist)", "req": True, "ayuda": "País o región donde opera el lead.", "notas": "", "opts": ["México", "Canadá", "Estados Unidos", "Centroamérica", "España"]}
+        {"id": "pais_region", "campo": "País / Región", "tipo": "Lista (picklist)", "req": True, "ayuda": "País o región donde opera el lead.", "notas": "", "opts": ["México", "Estados Unidos", "Canadá", "Centroamérica", "España"]}
       ]
     }, {
       "nombre": "Origen y Asignación",
@@ -63,12 +272,12 @@ TOLLGATES_DATA = {
     "secciones": [{
       "nombre": "Segmentación y Fit",
       "campos": [
-        {"id": "macro_segmento", "campo": "Macro Segmento", "tipo": "Lista (picklist)", "req": True, "ayuda": "Macro segmento al que pertenece el lead según la taxonomía BSV LAMMSA.", "notas": "", "opts": ["Industrial y Manufactura", "Automotriz y Autopartes", "Alimentos y Bebidas", "Metalmecánica y Siderurgia", "Químico y Farmacéutico", "Logística y Distribución", "Comercio y Servicios"]},
-        {"id": "sub_segmento", "campo": "Sub-Segmento", "tipo": "Lista (picklist)", "req": False, "ayuda": "Sub-segmento específico de la industria.", "notas": "", "opts": ["Manufactura de Plásticos", "Empaque y Embalaje", "Ensamblaje Mecánico", "Mantenimiento Industrial MRO", "Mecanizado y Troquelado"]},
-        {"id": "actividad_economica", "campo": "Actividad Económica", "tipo": "Lista (picklist)", "req": False, "ayuda": "Actividad económica específica del cliente.", "notas": "", "opts": ["Transformación / Producción", "Comercialización / Distribución", "Prestación de Servicios", "Extracción / Materia Prima"]},
+        {"id": "macro_segmento", "campo": "Macro Segmento", "tipo": "Lista (picklist)", "req": True, "ayuda": "Macro segmento al que pertenece el lead (Columnas A y B).", "notas": "", "opts": MACRO_SEGMENTOS_LIST},
+        {"id": "sub_segmento", "campo": "Sub-Segmento", "tipo": "Lista (picklist)", "req": False, "ayuda": "Sub-segmento específico (Columnas C y D).", "notas": "", "opts": SUB_SEGMENTOS_LIST},
+        {"id": "actividad_economica", "campo": "Actividad Económica", "tipo": "Lista (picklist)", "req": False, "ayuda": "Actividad económica detallada SCIAN (Columnas G y H).", "notas": "", "opts": ACTIVIDADES_ECONOMICAS_LIST},
         {"id": "geografia", "campo": "Geografía", "tipo": "Lista (picklist)", "req": True, "ayuda": "Región geográfica donde opera el cliente.", "notas": "", "opts": ["Norte", "Centro", "Bajio", "Occidente", "Golfo"]},
         {"id": "relevancia", "campo": "Relevancia del Portafolio", "tipo": "Lista (picklist)", "req": True, "ayuda": "Nivel de relevancia del portafolio.", "notas": "", "opts": ["Alta", "Media", "Baja"]},
-        {"id": "tamano_empresa", "campo": "Tamaño de Empresa", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estimación del tamaño de la empresa por ventas anuales.", "notas": "", "opts": [
+        {"id": "tamano_empresa", "campo": "Tamaño de Empresa", "tipo": "Lista (picklist)", "req": True, "ayuda": "Estimación del tamaño por ventas anuales.", "notas": "", "opts": [
             "Más de $10,000,000",
             "$5,000,000 a $10,000,000",
             "$1,000,000 a $4,999,999",
@@ -817,7 +1026,6 @@ def home():
     if request.method == 'POST':
         action_type = request.form.get('action_type', '')
 
-        # 1. ACCIÓN: VER EN MODO LECTURA (CLIC EN EL NOMBRE DEL PROSPECTO)
         if action_type == 'ver_lectura':
             prospecto_id = int(request.form.get('prospecto_id', -1))
             if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
@@ -827,7 +1035,6 @@ def home():
                 mostrar_detalle = True
                 modo_lectura = True
 
-        # 2. ACCIÓN: EDITAR PROSPECTO (CLIC EN LA PLUMA)
         elif action_type == 'editar':
             prospecto_id = int(request.form.get('prospecto_id', -1))
             if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
@@ -837,7 +1044,6 @@ def home():
                 mostrar_detalle = True
                 modo_lectura = False
 
-        # 3. ACCIÓN: CAMBIAR DE MODO LECTURA A MODO EDICIÓN
         elif action_type == 'cambiar_a_edicion':
             prospecto_id = int(request.form.get('prospecto_id', -1))
             if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
@@ -847,16 +1053,14 @@ def home():
                 mostrar_detalle = True
                 modo_lectura = False
 
-        # 4. ACCIÓN: ELIMINAR PROSPECTO (CLIC EN LA BASURA)
         elif action_type == 'eliminar':
             prospecto_id = int(request.form.get('prospecto_id', -1))
             if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
                 eliminado = REGISTROS_PROSPECTOS.pop(prospecto_id)
                 nom = (eliminado['datos'].get('nombre', '') + ' ' + eliminado['datos'].get('apellidos', '')).strip()
-                mensaje = f"¡Prospecto '{nom or 'Seleccionado'}' eliminado correctamente de la base de datos!"
+                mensaje = f"¡Prospecto '{nom or 'Seleccionado'}' eliminado correctamente!"
             mostrar_detalle = False
 
-        # 5. ACCIÓN: CREAR NUEVO PROSPECTO (+ NUEVO)
         elif action_type == 'nuevo':
             mostrar_detalle = True
             modo_lectura = False
@@ -865,7 +1069,6 @@ def home():
             active_tg = 'TG0'
             registro_actual = {"id": -1, "unlocked_idx": 0, "active_tg": "TG0", "datos": {}}
 
-        # 6. ACCIÓN: AVANZAR DE TOLLGATE Y GUARDAR EN BD
         elif action_type == 'avanzar':
             mostrar_detalle = True
             modo_lectura = False
@@ -873,13 +1076,11 @@ def home():
             current_active_tg = request.form.get('current_active_tg', 'TG0')
             unlocked_idx = int(request.form.get('unlocked_idx', 0))
 
-            # Recopilar todos los campos del formulario
             datos_capturados = {}
             for key, val in request.form.items():
                 if key not in ['action_type', 'prospecto_id', 'current_active_tg', 'unlocked_idx']:
                     datos_capturados[key] = val.strip()
 
-            # Lógica de actualización o creación en memoria
             if 0 <= prospecto_id < len(REGISTROS_PROSPECTOS):
                 REGISTROS_PROSPECTOS[prospecto_id]['datos'].update(datos_capturados)
                 registro_actual = REGISTROS_PROSPECTOS[prospecto_id]
@@ -893,7 +1094,6 @@ def home():
                 REGISTROS_PROSPECTOS.append(registro_actual)
                 prospecto_id = len(REGISTROS_PROSPECTOS) - 1
 
-            # Lógica de guardado en SharePoint
             nombre = datos_capturados.get('nombre', '')
             apellidos = datos_capturados.get('apellidos', '')
             empresa = datos_capturados.get('empresa', '')
@@ -911,14 +1111,17 @@ def home():
                     "BSV_Email_Corporativo__c": datos_capturados.get('email', ''),
                     "BSV_Telefono_Contacto__c": datos_capturados.get('telefono', ''),
                     "BSV_WhatsApp__c": datos_capturados.get('whatsapp', ''),
-                    "BSV_Pais___Region__c": datos_capturados.get('pais_region', '')
+                    "BSV_Pais___Region__c": datos_capturados.get('pais_region', ''),
+                    "BSV_Macro_Segmento__c": datos_capturados.get('macro_segmento', ''),
+                    "BSV_Sub_Segmento__c": datos_capturados.get('sub_segmento', ''),
+                    "BSV_Actividad_Economica__c": datos_capturados.get('actividad_economica', ''),
+                    "BSV_Tamano_Empresa__c": datos_capturados.get('tamano_empresa', '')
                 })
                 ctx.execute_query()
-                mensaje = f"¡Datos de {current_active_tg} guardados exitosamente en SharePoint!"
+                mensaje = f"¡Datos de {current_active_tg} guardados en SharePoint correctamente!"
             except Exception as e:
                 mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
 
-            # Calcular el siguiente Tollgate
             current_idx = tg_keys.index(current_active_tg) if current_active_tg in tg_keys else 0
             if current_idx < len(tg_keys) - 1:
                 next_idx = current_idx + 1
@@ -927,7 +1130,7 @@ def home():
             else:
                 active_tg = current_active_tg
                 mostrar_detalle = False
-                mensaje = f"¡Captura completa de los 14 Tollgates finalizada exitosamente para {nombre} {apellidos}!"
+                mensaje = f"¡Captura completada para {nombre} {apellidos}!"
 
             registro_actual['unlocked_idx'] = unlocked_idx
             registro_actual['active_tg'] = active_tg
