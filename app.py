@@ -398,22 +398,15 @@ HTML_TEMPLATE = """
         .sf-highlight-item span { display: block; font-size: 11px; color: var(--sf-text-muted); font-weight: 600; }
         .sf-highlight-item strong { font-size: 13px; color: var(--sf-text-main); }
 
-        /* ESTILOS DE PESTAÑAS Y BLOQUEO PROGRESIVO DE CHEVRONS */
         .sf-path-bar { display: flex; background-color: #f3f3f3; padding: 8px 16px; border-bottom: 1px solid var(--sf-border); overflow-x: auto; white-space: nowrap; }
         
         .sf-chevron {
             padding: 8px 16px; font-size: 12px; font-weight: 700; text-align: center; border: 1px solid var(--sf-border); border-radius: 4px; margin-right: 6px;
             transition: all 0.2s ease;
         }
-        .sf-chevron.active {
-            background-color: var(--sf-brand); color: #ffffff; border-color: var(--sf-brand); cursor: pointer;
-        }
-        .sf-chevron.completed {
-            background-color: var(--sf-green); color: #ffffff; border-color: var(--sf-green); cursor: pointer;
-        }
-        .sf-chevron.disabled {
-            background-color: #e0e0e0; color: #888888; border-color: #cccccc; cursor: not-allowed; opacity: 0.45; pointer-events: none;
-        }
+        .sf-chevron.active { background-color: var(--sf-brand); color: #ffffff; border-color: var(--sf-brand); cursor: pointer; }
+        .sf-chevron.completed { background-color: var(--sf-green); color: #ffffff; border-color: var(--sf-green); cursor: pointer; }
+        .sf-chevron.disabled { background-color: #e0e0e0; color: #888888; border-color: #cccccc; cursor: not-allowed; opacity: 0.45; pointer-events: none; }
 
         .sf-split-layout { display: grid; grid-template-columns: 7fr 3fr; background-color: #b0c4df; gap: 12px; padding: 12px; }
         @media (max-width: 992px) { .sf-split-layout { grid-template-columns: 1fr; } }
@@ -505,7 +498,6 @@ HTML_TEMPLATE = """
                 </div>
             </div>
             <div>
-                <!-- BOTÓN PARA CREAR NUEVO PROSPECTO -->
                 <form method="POST" style="display:inline;">
                     <input type="hidden" name="action_type" value="nuevo">
                     <button type="submit" class="sf-btn-nuevo">+ Nuevo</button>
@@ -539,7 +531,6 @@ HTML_TEMPLATE = """
                             <tr>
                                 <td><input type="checkbox"></td>
                                 
-                                <!-- CLIC EN EL NOMBRE: MODO LECTURA NO EDITABLE -->
                                 <td>
                                     <form method="POST" style="display:inline;">
                                         <input type="hidden" name="action_type" value="ver_lectura">
@@ -675,11 +666,6 @@ HTML_TEMPLATE = """
                                         {% for field in seccion['campos'] %}
                                             {% set f_val = d_curr.get(field['id'], '') %}
                                             
-                                            <!-- DEFAULT PREDETERMINADO EN MEXICO (TG0) -->
-                                            {% if field['id'] == 'pais_region' and f_val == '' %}
-                                                {% set f_val = 'México' %}
-                                            {% endif %}
-
                                             <div class="sf-field-group" {% if field['tipo'] in ['Texto largo', 'UI_Contactos', 'Checkboxes'] %}style="grid-column: span 2;"{% endif %}>
                                                 <div class="sf-label">
                                                     {% if field['req'] and not modo_lectura %}<span class="sf-req">*</span>{% endif %}{{ field['campo'] }}
@@ -687,14 +673,13 @@ HTML_TEMPLATE = """
 
                                                 {% if field['tipo'] == 'UI_Contactos' %}
                                                     <!-- INTERFAZ DINÁMICA DE CONTACTOS ADICIONALES -->
-                                                    <div id="contactos-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
-                                                        <!-- Fichas de contactos se renderizan con JS -->
+                                                    <div class="contactos-container-render" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
                                                     </div>
                                                     {% if not modo_lectura %}
-                                                    <button type="button" class="sf-btn-sub" onclick="abrirModalContacto()">+ Agregar Contacto Adicional</button>
+                                                    <button type="button" class="sf-btn-sub" style="width:fit-content;" onclick="abrirModalContacto()">+ Agregar Contacto Adicional</button>
                                                     {% endif %}
                                                     <input type="hidden" name="{{ field['id'] }}" id="input_contactos_adic" value="{{ f_val }}">
-                                                    
+
                                                 {% elif field['tipo'] == 'Checkboxes' %}
                                                     <!-- INTERFAZ MULTIPLE CHECKBOX (EJ. AREAS DE INTERES) -->
                                                     <div class="sf-checkbox-group" data-req="{% if field['req'] %}true{% else %}false{% endif %}">
@@ -718,8 +703,7 @@ HTML_TEMPLATE = """
                                                         <option value="">--Seleccione {{ field['campo'] }}--</option>
                                                         {% if field['opts'] %}
                                                             {% for opt in field['opts'] %}
-                                                                {% set is_selected = (f_val == opt) or (field['id'] == 'pais_region' and opt == 'México' and f_val == '') %}
-                                                                <option value="{{ opt }}" {% if is_selected %}selected{% endif %}>{{ opt }}</option>
+                                                                <option value="{{ opt }}" {% if f_val == opt %}selected{% endif %}>{{ opt }}</option>
                                                             {% endfor %}
                                                         {% endif %}
                                                     </select>
@@ -732,11 +716,19 @@ HTML_TEMPLATE = """
                                                 {% elif field['tipo'] == 'Email' %}
                                                     <input type="email" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] == 'Teléfono' %}
-                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="{% if field['id'] == 'whatsapp' %}+52 1 81 1234 5678{% else %}+52 81 0000 0000{% endif %}" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="+52 81 0000 0000" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] in ['Número', 'Porcentaje (%)', 'Moneda ($)'] %}
                                                     <input type="number" step="any" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %}>
                                                 {% else %}
                                                     <input type="text" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if field['id'] == 'gerente_area' %}readonly style="pointer-events:none; background-color:#f3f3f3;"{% endif %} {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
+                                                {% endif %}
+
+                                                <!-- BOTONES EXTRA DE CONTACTOS ADICIONALES PARA SCORES TG7 y TG8 -->
+                                                {% if field['id'] in ['meddicc_c1_score', 'meddicc_e_score'] %}
+                                                    <div class="contactos-container-render" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; margin-bottom: 10px;"></div>
+                                                    {% if not modo_lectura %}
+                                                    <button type="button" class="sf-btn-sub" style="margin-top: 8px; width: fit-content;" onclick="abrirModalContacto()">+ Agregar Contacto Adicional</button>
+                                                    {% endif %}
                                                 {% endif %}
 
                                                 <!-- DESCRIPCIÓN COLUMNA F -->
@@ -910,8 +902,15 @@ HTML_TEMPLATE = """
     
     // --- LÓGICA DE FICHAS DE CONTACTOS ADICIONALES (POPUP Y CRM) ---
     let arrayContactos = [];
+    let contactosInicializados = false;
 
     function inicializarContactos() {
+        if(contactosInicializados) {
+            verificarCRM();
+            renderizarFichasContactos();
+            return;
+        }
+
         const inp = document.getElementById('input_contactos_adic');
         if(inp && inp.value) {
             try {
@@ -921,6 +920,13 @@ HTML_TEMPLATE = """
             }
         }
         
+        verificarCRM();
+        renderizarFichasContactos();
+        contactosInicializados = true;
+    }
+    
+    function verificarCRM() {
+        // Simulación CRM: Si la empresa existe en TG0 y las fichas están vacías, trae un contacto existente del CRM
         const nombreEmpresa = document.getElementById('input-empresa');
         if(nombreEmpresa && nombreEmpresa.value.trim() !== '' && arrayContactos.length === 0) {
             arrayContactos.push({
@@ -936,7 +942,6 @@ HTML_TEMPLATE = """
             });
             guardarEstadoContactos();
         }
-        renderizarFichasContactos();
     }
 
     function abrirModalContacto() {
@@ -982,24 +987,25 @@ HTML_TEMPLATE = """
     }
 
     function toggleFichaInfo(idx) {
-        const body = document.getElementById('ficha-body-' + idx);
-        body.style.display = body.style.display === 'none' ? 'block' : 'none';
+        document.querySelectorAll('.ficha-body-' + idx).forEach(body => {
+            body.style.display = (body.style.display === 'none' || body.style.display === '') ? 'block' : 'none';
+        });
     }
 
     function renderizarFichasContactos() {
-        const container = document.getElementById('contactos-container');
-        if(!container) return;
-        container.innerHTML = '';
+        const containers = document.querySelectorAll('.contactos-container-render');
+        if(containers.length === 0) return;
         
+        let html = '';
         arrayContactos.forEach((c, idx) => {
             let badgeHtml = c.crm_badge ? `<span style="background:#eef4fe; color:var(--sf-brand); padding:2px 6px; border-radius:4px; font-size:10px; margin-left:8px;">Contacto CRM Sugerido</span>` : '';
-            let html = `
+            html += `
                 <div class="contact-card ${c.crm_badge ? 'highlight-crm' : ''}" onclick="toggleFichaInfo(${idx})">
                     <div class="contact-card-header">
                         👤 ${c.nombre} ${c.apellidos} ${badgeHtml}
                     </div>
                     <div style="font-size:12px; color:#514f4d; margin-top:4px;">${c.cargo || 'Sin cargo'} - ${c.rol || 'Rol no definido'}</div>
-                    <div class="contact-card-body" id="ficha-body-${idx}">
+                    <div class="contact-card-body ficha-body-${idx}" style="display:none; margin-top: 8px; font-size: 12px; color: var(--sf-text-muted); padding-top: 8px; border-top: 1px dashed var(--sf-border);">
                         <strong>Empresa:</strong> ${c.empresa}<br>
                         <strong>Email:</strong> ${c.email}<br>
                         <strong>Teléfono:</strong> ${c.telefono}<br>
@@ -1007,7 +1013,10 @@ HTML_TEMPLATE = """
                     </div>
                 </div>
             `;
-            container.innerHTML += html;
+        });
+        
+        containers.forEach(container => {
+            container.innerHTML = html;
         });
     }
 
@@ -1030,13 +1039,11 @@ HTML_TEMPLATE = """
         
         if (pantallaTarget && !modoLecturaGlobal) {
             pantallaTarget.querySelectorAll('[data-req="true"]').forEach(el => {
-                // Evitamos ponerle required a los grupos de checkboxes si la validación HTML falla nativamente
                 if(!el.classList.contains('sf-checkbox-group')) {
                     el.setAttribute('required', 'required');
                 }
             });
             
-            // Validación manual rápida para el grupo de Checkboxes (Áreas de interés TG3)
             const checkboxGroup = pantallaTarget.querySelector('.sf-checkbox-group[data-req="true"]');
             if (checkboxGroup) {
                 const checkboxes = checkboxGroup.querySelectorAll('input[type="checkbox"]');
@@ -1148,7 +1155,7 @@ HTML_TEMPLATE = """
             actualizarCascadaTG1(false);
         }
         
-        if (tgId === 'TG2') {
+        if (tgId === 'TG2' || tgId === 'TG7' || tgId === 'TG8') {
             inicializarContactos();
         }
         
@@ -1188,15 +1195,14 @@ HTML_TEMPLATE = """
     document.addEventListener('DOMContentLoaded', function() {
         activarTollgate('{{ active_tg }}', {{ unlocked_idx }});
         
-        // Ejecutar formatCurrency() al cargar si hay campos con valores ya guardados
         document.querySelectorAll('input[oninput*="formatCurrency"]').forEach(el => {
             if (el.value) {
                 formatCurrency(el);
             }
         });
         
-        // Inicializar jerarquía si estamos en un prospecto cargado
         actualizarGeografia();
+        inicializarContactos();
     });
 </script>
 
@@ -1276,7 +1282,6 @@ def home():
                 if key not in ['action_type', 'prospecto_id', 'current_active_tg', 'unlocked_idx']:
                     vals = request.form.getlist(key)
                     if len(vals) > 1:
-                        # Si es un grupo de checkboxes, agrupar con comas
                         datos_capturados[key] = ", ".join(v.strip() for v in vals)
                     else:
                         datos_capturados[key] = vals[0].strip()
