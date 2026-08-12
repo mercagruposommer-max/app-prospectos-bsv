@@ -12,16 +12,8 @@ PASSWORD = "TuPassword123"
 # --- MATRIZ DE JERARQUÍA EXTRAÍDA DEL EXCEL DE MACROSEGMENTOS LAMMSA ---
 HIERARCHY_DATA = {
   "IIA — Infraestructura Inteligente y Automatización Industrial": {
-    "subs": [
-      "IIA-01 — Robótica y Manufactura Avanzada",
-      "IIA-02 — Plataformas IIoT (Plataformas Industriales del Internet de las Cosas)",
-      "IIA-03 — Visión Artificial"
-    ],
-    "acts": [
-      "333999 — Fabricación de otra maquinaria y equipo para la industria en general",
-      "334519 — Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico",
-      "333249 — Fabricación de maquinaria y equipo para otras industrias manufactureras"
-    ],
+    "subs": ["IIA-01 — Robótica y Manufactura Avanzada", "IIA-02 — Plataformas IIoT (Plataformas Industriales del Internet de las Cosas)", "IIA-03 — Visión Artificial"],
+    "acts": ["333999 — Fabricación de otra maquinaria y equipo para la industria en general", "334519 — Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico", "333249 — Fabricación de maquinaria y equipo para otras industrias manufactureras"],
     "sub_map": {
       "IIA-01 — Robótica y Manufactura Avanzada": ["333999 — Fabricación de otra maquinaria y equipo para la industria en general"],
       "IIA-02 — Plataformas IIoT (Plataformas Industriales del Internet de las Cosas)": ["334519 — Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico"],
@@ -29,33 +21,8 @@ HIERARCHY_DATA = {
     }
   },
   "EYU — Energía y Utilidades": {
-    "subs": [
-      "EYU-01 — Equipo de Transmisión y Distribución de energía",
-      "EYU-02 — Equipo de Transmisión y Distribución de energía",
-      "EYU-03 — Generación y Distribución de Eneregía",
-      "EYU-04 — Agua",
-      "EYU-05 — Petróleo y Gas"
-    ],
-    "acts": [
-      "335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica",
-      "335311 — Fabricación de motores y generadores eléctricos",
-      "221111 — Generación de electricidad a partir de combustibles fósiles",
-      "221112 — Generación de electricidad a partir de energía hidráulica",
-      "221122 — Distribución de energía eléctrica",
-      "221119 — Generación de electricidad a partir de otro tipo de energía",
-      "221121 — Transmisión de energía eléctrica",
-      "221123 — Comercialización de energía eléctrica",
-      "237133 — Supervisión de construcción de obras de generación y conducción de energía eléctrica y de obras para telecomunicaciones",
-      "237131 — Construcción de obras de generación y conducción de energía eléctrica",
-      "221312 — Captación, tratamiento y suministro de agua (sector público)",
-      "237111 — Construcción de obras para el tratamiento, distribución y suministro de agua y drenaje",
-      "221311 — Captación, tratamiento y suministro de agua (sector privado)",
-      "213111 — Perforación de pozos petroleros y de gas",
-      "211111 — Extracción de petróleo y gas natural asociado",
-      "324110 — Refinación de petróleo",
-      "237122 — Construcción de plantas de refinería y petroquímica",
-      "221210 — Suministro de gas natural por ductos al consumidor final"
-    ],
+    "subs": ["EYU-01 — Equipo de Transmisión y Distribución de energía", "EYU-02 — Equipo de Transmisión y Distribución de energía", "EYU-03 — Generación y Distribución de Eneregía", "EYU-04 — Agua", "EYU-05 — Petróleo y Gas"],
+    "acts": ["335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica", "335311 — Fabricación de motores y generadores eléctricos", "221111 — Generación de electricidad a partir de combustibles fósiles", "221112 — Generación de electricidad a partir de energía hidráulica", "221122 — Distribución de energía eléctrica", "221119 — Generación de electricidad a partir de otro tipo de energía", "221121 — Transmisión de energía eléctrica", "221123 — Comercialización de energía eléctrica", "237133 — Supervisión de construcción de obras de generación y conducción de energía eléctrica y de obras para telecomunicaciones", "237131 — Construcción de obras de generación y conducción de energía eléctrica", "221312 — Captación, tratamiento y suministro de agua (sector público)", "237111 — Construcción de obras para el tratamiento, distribución y suministro de agua y drenaje", "221311 — Captación, tratamiento y suministro de agua (sector privado)", "213111 — Perforación de pozos petroleros y de gas", "211111 — Extracción de petróleo y gas natural asociado", "324110 — Refinación de petróleo", "237122 — Construcción de plantas de refinería y petroquímica", "221210 — Suministro de gas natural por ductos al consumidor final"],
     "sub_map": {
       "EYU-01 — Equipo de Transmisión y Distribución de energía": ["335312 — Fabricación de equipo y aparatos de distribución de energía eléctrica"],
       "EYU-02 — Equipo de Transmisión y Distribución de energía": ["335311 — Fabricación de motores y generadores eléctricos"],
@@ -177,37 +144,27 @@ HIERARCHY_DATA = {
   "SYM — Salud y Medicina": {
     "subs": ["SYM-01 — Dispositivos Médicos y Equipo Hospitalario", "SYM-02 — Mobiliario Médico y Quirúrgico", "SYM-03 — Instrumental Quirúrgico y de Diagnóstico"],
     "acts": ["339110 — Fabricación de equipo, instrumental y suministros médicos"],
-    "sub_map": {
-      "SYM-01 — Dispositivos Médicos y Equipo Hospitalario": ["339110 — Fabricación de equipo, instrumental y suministros médicos"]
-    }
+    "sub_map": {"SYM-01 — Dispositivos Médicos y Equipo Hospitalario": ["339110 — Fabricación de equipo, instrumental y suministros médicos"]}
   },
   "MRO — Mantenimiento MRO": {
     "subs": ["MRO-01 — Mantenimiento Industrial General MRO", "MRO-02 — Servicios de Reparación y Overhaul Mecánico", "MRO-03 — Suministros MRO y Consumibles de Planta"],
     "acts": ["541330 — Servicios de ingeniería y servicios relacionados"],
-    "sub_map": {
-      "MRO-01 — Mantenimiento Industrial General MRO": ["541330 — Servicios de ingeniería y servicios relacionados"]
-    }
+    "sub_map": {"MRO-01 — Mantenimiento Industrial General MRO": ["541330 — Servicios de ingeniería y servicios relacionados"]}
   },
   "ELA — Electrodomésticos, Línea Blanca y Aires Acondicionados Compactos": {
     "subs": ["ELA-01 — Ensamble de Electrodomésticos y Línea Blanca", "ELA-02 — Equipos de Aire Acondicionado y Refrigeración Compacta"],
     "acts": ["335220 — Fabricación de enseres electrodomésticos mayores"],
-    "sub_map": {
-      "ELA-01 — Ensamble de Electrodomésticos y Línea Blanca": ["335220 — Fabricación de enseres electrodomésticos mayores"]
-    }
+    "sub_map": {"ELA-01 — Ensamble de Electrodomésticos y Línea Blanca": ["335220 — Fabricación de enseres electrodomésticos mayores"]}
   },
   "MUE — Muebles y Maderas": {
     "subs": ["MUE-01 — Fabricación de Muebles Metálicos y de Madera", "MUE-02 — Muebles para Oficina y Comercio"],
     "acts": ["337120 — Fabricación de muebles para el hogar y oficina"],
-    "sub_map": {
-      "MUE-01 — Fabricación de Muebles Metálicos y de Madera": ["337120 — Fabricación de muebles para el hogar y oficina"]
-    }
+    "sub_map": {"MUE-01 — Fabricación de Muebles Metálicos y de Madera": ["337120 — Fabricación de muebles para el hogar y oficina"]}
   },
   "MAR — Marina y Construcción Naval": {
     "subs": ["MAR-01 — Astilleros y Construcción Naval", "MAR-02 — Mantenimiento y Reparación Marítima"],
     "acts": ["336611 — Astilleros y construcción de embarcaciones"],
-    "sub_map": {
-      "MAR-01 — Astilleros y Construcción Naval": ["336611 — Astilleros y construcción de embarcaciones"]
-    }
+    "sub_map": {"MAR-01 — Astilleros y Construcción Naval": ["336611 — Astilleros y construcción de embarcaciones"]}
   },
   "CME — Comercio al por menor": {
     "subs": ["CME-01 — Tiendas de Autoservicio y Ferreterías al por Menor"],
@@ -220,9 +177,7 @@ HIERARCHY_DATA = {
   "MIN — Minería": {
     "subs": ["MIN-01 — Minería de Metales Preciosos e Industriales", "MIN-02 — Extracción de Minerales No Metálicos y Canteras"],
     "acts": ["212210 — Minería de mineral de hierro", "212220 — Minería de oro y plata"],
-    "sub_map": {
-      "MIN-01 — Minería de Metales Preciosos e Industriales": ["212210 — Minería de mineral de hierro", "212220 — Minería de oro y plata"]
-    }
+    "sub_map": {"MIN-01 — Minería de Metales Preciosos e Industriales": ["212210 — Minería de mineral de hierro", "212220 — Minería de oro y plata"]}
   },
   "PYC — Papel, Cartón y productos derivados": {
     "subs": ["PYC-01 — Fabricación de Cajas de Cartón y Empaques", "PYC-02 — Fabricación de Papel y Celulosa"],
@@ -235,39 +190,12 @@ HIERARCHY_DATA = {
   "OIS — Otras Industrias y Servicios": {
     "subs": ["OIS-01 — Servicios de Ingeniería y Consultoría Técnica", "OIS-02 — Otras Manufacturas Diversas"],
     "acts": ["541330 — Servicios de ingeniería y servicios relacionados"],
-    "sub_map": {
-      "OIS-01 — Servicios de Ingeniería y Consultoría Técnica": ["541330 — Servicios de ingeniería y servicios relacionados"]
-    }
+    "sub_map": {"OIS-01 — Servicios de Ingeniería y Consultoría Técnica": ["541330 — Servicios de ingeniería y servicios relacionados"]}
   }
 }
 
 MACRO_OPTS = list(HIERARCHY_DATA.keys())
-
-# Base de datos local en memoria para el prototipo
-REGISTROS_PROSPECTOS = [
-    {
-        "id": 0,
-        "unlocked_idx": 2,
-        "datos": {
-            "nombre": "Carlos",
-            "apellidos": "Gómez Ramírez",
-            "empresa": "Industrial Monterrey SA",
-            "cargo": "Director de Operaciones",
-            "email": "cgomez@indmonterrey.com",
-            "telefono": "+52 81 8300 1122",
-            "whatsapp": "+52 1 81 8300 1122",
-            "pais_region": "Estados Unidos",
-            "notas_adicionales": "Contacto clave validado en expo.",
-            "macro_segmento": "PAM — Procesamiento de Alimentos y Manufactura Especializada",
-            "sub_segmento": "PAM-01 — Procesamiento de Carnes y Embutidos",
-            "actividad_economica": "311610 — Matanza, empacado y procesamiento de carne",
-            "geografia": "Norte",
-            "relevancia": "Alta",
-            "tamano_empresa": "Mediana — $50-200M",
-            "banda": "K"
-        }
-    }
-]
+REGISTROS_PROSPECTOS = []
 
 # MATRIZ COMPLETA DE TOLLGATES (TG0 A TG13)
 TOLLGATES_DATA = {
@@ -364,7 +292,7 @@ TOLLGATES_DATA = {
         {"id": "osp_asignado", "campo": "OSP Asignado", "tipo": "Texto", "req": True, "ayuda": "Nombre del OSP que recibe la cuenta.", "notas": ""},
         {"id": "gerente_area", "campo": "Gerente de Área", "tipo": "Texto", "req": True, "ayuda": "Nombre del Gerente responsable.", "notas": ""},
         {"id": "fecha_asignacion", "campo": "Fecha de Asignación", "tipo": "Fecha", "req": True, "ayuda": "Fecha de asignación formal.", "notas": ""},
-        {"id": "fecha_comp_1ra_inter", "campo": "Fecha Compromiso 1ra Interacción", "tipo": "Fecha", "req": True, "ayuda": "Fecha comprometida para primera interacción (<=5 días).", "notas": "Convierte a cuenta"}
+        {"id": "fecha_comp_1ra_inter", "campo": "Fecha Compromiso 1ra Interacción", "tipo": "Fecha", "req": True, "ayuda": "Fecha comprometida para primera interacción.", "notas": "Convierte a cuenta"}
       ]
     }]
   },
@@ -373,7 +301,7 @@ TOLLGATES_DATA = {
     "secciones": [{
       "nombre": "Datos de la WO",
       "campos": [
-        {"id": "tipo_oportunidad", "campo": "Tipo de Oportunidad", "tipo": "Lista (picklist)", "req": True, "ayuda": "Clasificación comercial de la oportunidad.", "notas": "", "opts": ["XR — Reactivación", "XP — Prospecto", "XS — Cross Sell Sommer"]},
+        {"id": "tipo_oportunidad", "campo": "Tipo de Oportunidad", "tipo": "Lista (picklist)", "req": True, "ayuda": "Clasificación comercial.", "notas": "", "opts": ["XR — Reactivación", "XP — Prospecto", "XS — Cross Sell Sommer"]},
         {"id": "aoi_estimado", "campo": "AOI Estimado (%)", "tipo": "Porcentaje (%)", "req": True, "ayuda": "Porcentaje de ahorro o ingreso estimado.", "notas": ""},
         {"id": "primera_inter_ok", "campo": "Primera Interacción Completada", "tipo": "Lista (picklist)", "req": True, "ayuda": "Indica si se completó la primera interacción.", "notas": "Enviar Template de Agradecimiento", "opts": ["Sí", "No — pendiente"]},
         {"id": "fecha_1ra_inter", "campo": "Fecha de Primera Interacción", "tipo": "Fecha", "req": False, "ayuda": "Fecha real de la primera interacción.", "notas": ""},
@@ -543,7 +471,6 @@ TOLLGATES_DATA = {
   }
 }
 
-# PLANTILLA HTML SALESFORCE LIGHTNING SYSTEM
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="es">
@@ -634,7 +561,6 @@ HTML_TEMPLATE = """
         .sf-highlight-item span { display: block; font-size: 11px; color: var(--sf-text-muted); font-weight: 600; }
         .sf-highlight-item strong { font-size: 13px; color: var(--sf-text-main); }
 
-        /* ESTILOS DE PESTAÑAS Y BLOQUEO PROGRESIVO DE CHEVRONS */
         .sf-path-bar { display: flex; background-color: #f3f3f3; padding: 8px 16px; border-bottom: 1px solid var(--sf-border); overflow-x: auto; white-space: nowrap; }
         
         .sf-chevron {
@@ -679,6 +605,8 @@ HTML_TEMPLATE = """
         
         .badge-read-only { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
         .badge-edit-mode { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+        
+        .highlight-yellow { background-color: #fff9c4 !important; }
     </style>
 </head>
 <body>
@@ -714,7 +642,6 @@ HTML_TEMPLATE = """
                 </div>
             </div>
             <div>
-                <!-- BOTÓN PARA CREAR NUEVO PROSPECTO -->
                 <form method="POST" style="display:inline;">
                     <input type="hidden" name="action_type" value="nuevo">
                     <button type="submit" class="sf-btn-nuevo">+ Nuevo</button>
@@ -855,7 +782,7 @@ HTML_TEMPLATE = """
         </div>
 
         <!-- FORMULARIO PRINCIPAL -->
-        <form method="POST" id="form-prospecto">
+        <form method="POST" id="form-prospecto" onsubmit="prepararFormularioParaEnvio()">
             <input type="hidden" name="action_type" value="avanzar">
             <input type="hidden" name="prospecto_id" value="{{ prospecto_id }}">
             <input type="hidden" name="current_active_tg" id="current_active_tg" value="{{ active_tg }}">
@@ -888,10 +815,10 @@ HTML_TEMPLATE = """
                                                 </div>
 
                                                 {% if field['tipo'] == 'Lista (picklist)' %}
-                                                    <select name="{{ field['id'] }}" class="sf-select"
+                                                    <select name="{{ field['id'] }}" 
+                                                            class="sf-select {% if field['id'] == 'actividad_economica' and not modo_lectura %}highlight-yellow{% endif %}"
                                                             data-saved-val="{{ f_val }}"
-                                                            {% if field['req'] %}data-req="true"{% endif %}
-                                                            {% if field['id'] == 'actividad_economica' %}style="background-color: #fff9c4;"{% endif %}
+                                                            data-req="{% if field['req'] %}true{% else %}false{% endif %}"
                                                             {% if field['id'] == 'macro_segmento' %}onchange="actualizarCascadaTG1(true)"{% endif %}
                                                             {% if field['id'] == 'sub_segmento' %}onchange="actualizarCascadaTG1(false)"{% endif %}
                                                             {% if modo_lectura %}disabled{% endif %}>
@@ -903,17 +830,17 @@ HTML_TEMPLATE = """
                                                         {% endif %}
                                                     </select>
                                                 {% elif field['tipo'] == 'Texto largo' %}
-                                                    <textarea name="{{ field['id'] }}" class="sf-textarea" rows="3" {% if field['req'] %}data-req="true"{% endif %} {% if modo_lectura %}disabled{% endif %}>{{ f_val }}</textarea>
+                                                    <textarea name="{{ field['id'] }}" class="sf-textarea" rows="3" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %}>{{ f_val }}</textarea>
                                                 {% elif field['tipo'] == 'Fecha' %}
-                                                    <input type="date" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" {% if field['req'] %}data-req="true"{% endif %} {% if modo_lectura %}disabled{% endif %}>
+                                                    <input type="date" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %}>
                                                 {% elif field['tipo'] == 'Email' %}
-                                                    <input type="email" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" {% if field['req'] %}data-req="true"{% endif %} {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="email" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] == 'Teléfono' %}
-                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="{% if field['id'] == 'whatsapp' %}+52 1 81 1234 5678{% else %}+52 81 0000 0000{% endif %}" {% if field['req'] %}data-req="true"{% endif %} {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="{% if field['id'] == 'whatsapp' %}+52 1 81 1234 5678{% else %}+52 81 0000 0000{% endif %}" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] in ['Número', 'Porcentaje (%)', 'Moneda ($)'] %}
-                                                    <input type="number" step="any" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" {% if field['req'] %}data-req="true"{% endif %} {% if modo_lectura %}disabled{% endif %}>
+                                                    <input type="number" step="any" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %}>
                                                 {% else %}
-                                                    <input type="text" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" {% if field['req'] %}data-req="true"{% endif %} {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="text" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% endif %}
 
                                                 {% if field['ayuda'] %}
@@ -940,10 +867,7 @@ HTML_TEMPLATE = """
                                 <button type="submit" class="sf-btn-nuevo">✏️ Pasar a Modo Edición</button>
                             </form>
                         {% else %}
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="action_type" value="volver_lista">
-                                <button type="submit" class="sf-btn-sub" style="margin-right: 8px;">Cancelar</button>
-                            </form>
+                            <button type="button" class="sf-btn-sub" onclick="volverALista()" style="margin-right: 8px;">Cancelar</button>
                             <button type="submit" class="sf-btn-nuevo">
                                 {% if active_tg == 'TG13' %}Avanzar y Finalizar{% else %}Avanzar ➔{% endif %}
                             </button>
@@ -989,6 +913,22 @@ HTML_TEMPLATE = """
     const HIERARCHY_DATA = {{ hierarchy_json|safe }};
     const modoLecturaGlobal = {% if modo_lectura %}true{% else %}false{% endif %};
     const unlockedIndexGlobal = {{ unlocked_idx }};
+    
+    // Función CRÍTICA para evitar que los campos ocultos bloqueen el HTML Form Submit
+    function prepararFormularioParaEnvio() {
+        document.querySelectorAll('[data-req="true"]').forEach(el => {
+            el.removeAttribute('required'); // Quitamos required de todo el DOM al enviar
+        });
+        
+        // Volvemos a colocar required solo en la pestaña que está visible actualmente
+        const activeTg = document.getElementById('current_active_tg').value;
+        const pantallaTarget = document.getElementById('pantalla-' + activeTg);
+        if (pantallaTarget && !modoLecturaGlobal) {
+            pantallaTarget.querySelectorAll('[data-req="true"]').forEach(el => {
+                el.setAttribute('required', 'required');
+            });
+        }
+    }
 
     function actualizarCascadaTG1(resetChildren) {
         const macroSelect = document.querySelector('select[name="macro_segmento"]');
@@ -1062,16 +1002,8 @@ HTML_TEMPLATE = """
             document.getElementById('header-objeto-fase').innerText = 'Objeto SF: ' + tgMetadatos[tgId].objeto + ' | Fase: ' + tgMetadatos[tgId].fase;
         }
 
-        // Lógica para quitar REQUIRED ocultos y evitar el bloqueo del navegador al presionar Avanzar
-        document.querySelectorAll('[data-req="true"]').forEach(el => {
-            el.removeAttribute('required');
-        });
-        
-        if (pantallaTarget && !modoLecturaGlobal) {
-            pantallaTarget.querySelectorAll('[data-req="true"]').forEach(el => {
-                el.setAttribute('required', 'required');
-            });
-        }
+        // Aplicamos la lógica de requirimientos
+        prepararFormularioParaEnvio();
 
         if (tgId === 'TG1') {
             actualizarCascadaTG1(false);
@@ -1101,7 +1033,12 @@ HTML_TEMPLATE = """
         document.getElementById('dyn-email').innerText = email || '—';
     }
 
-    // Inicializar la pestaña activa correctamente al cargar la página
+    function volverALista() {
+        document.getElementById('vista-detalle').style.display = 'none';
+        document.getElementById('vista-lista').style.display = 'block';
+    }
+
+    // Inicializar estado
     document.addEventListener('DOMContentLoaded', function() {
         activarTollgate('{{ active_tg }}', {{ unlocked_idx }});
     });
@@ -1217,10 +1154,10 @@ def home():
                     "BSV_Tamano_Empresa__c": datos_capturados.get('tamano_empresa', '')
                 })
                 ctx.execute_query()
-                # Mensaje de éxito real
+                # Éxito en SharePoint
                 mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
             except Exception as e:
-                # Mensaje de éxito cuando se guarda localmente en el prototipo
+                # Éxito Local
                 mensaje = f"¡Datos de {current_active_tg} guardados correctamente! Avanzando al siguiente Tollgate."
 
             current_idx = tg_keys.index(current_active_tg) if current_active_tg in tg_keys else 0
@@ -1231,7 +1168,7 @@ def home():
             else:
                 active_tg = current_active_tg
                 mostrar_detalle = False
-                mensaje = f"¡Captura completa de los 14 Tollgates finalizada exitosamente para {nombre} {apellidos}!"
+                mensaje = f"¡Captura completada para {nombre} {apellidos}!"
 
             registro_actual['unlocked_idx'] = unlocked_idx
             registro_actual['active_tg'] = active_tg
