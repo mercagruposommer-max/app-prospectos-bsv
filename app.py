@@ -404,9 +404,15 @@ HTML_TEMPLATE = """
             padding: 8px 16px; font-size: 12px; font-weight: 700; text-align: center; border: 1px solid var(--sf-border); border-radius: 4px; margin-right: 6px;
             transition: all 0.2s ease;
         }
-        .sf-chevron.active { background-color: var(--sf-brand); color: #ffffff; border-color: var(--sf-brand); cursor: pointer; }
-        .sf-chevron.completed { background-color: var(--sf-green); color: #ffffff; border-color: var(--sf-green); cursor: pointer; }
-        .sf-chevron.disabled { background-color: #e0e0e0; color: #888888; border-color: #cccccc; cursor: not-allowed; opacity: 0.45; pointer-events: none; }
+        .sf-chevron.active {
+            background-color: var(--sf-brand); color: #ffffff; border-color: var(--sf-brand); cursor: pointer;
+        }
+        .sf-chevron.completed {
+            background-color: var(--sf-green); color: #ffffff; border-color: var(--sf-green); cursor: pointer;
+        }
+        .sf-chevron.disabled {
+            background-color: #e0e0e0; color: #888888; border-color: #cccccc; cursor: not-allowed; opacity: 0.45; pointer-events: none;
+        }
 
         .sf-split-layout { display: grid; grid-template-columns: 7fr 3fr; background-color: #b0c4df; gap: 12px; padding: 12px; }
         @media (max-width: 992px) { .sf-split-layout { grid-template-columns: 1fr; } }
@@ -498,6 +504,7 @@ HTML_TEMPLATE = """
                 </div>
             </div>
             <div>
+                <!-- BOTÓN PARA CREAR NUEVO PROSPECTO -->
                 <form method="POST" style="display:inline;">
                     <input type="hidden" name="action_type" value="nuevo">
                     <button type="submit" class="sf-btn-nuevo">+ Nuevo</button>
@@ -531,6 +538,7 @@ HTML_TEMPLATE = """
                             <tr>
                                 <td><input type="checkbox"></td>
                                 
+                                <!-- CLIC EN EL NOMBRE: MODO LECTURA NO EDITABLE -->
                                 <td>
                                     <form method="POST" style="display:inline;">
                                         <input type="hidden" name="action_type" value="ver_lectura">
@@ -666,6 +674,11 @@ HTML_TEMPLATE = """
                                         {% for field in seccion['campos'] %}
                                             {% set f_val = d_curr.get(field['id'], '') %}
                                             
+                                            <!-- DEFAULT PREDETERMINADO EN MEXICO (TG0) -->
+                                            {% if field['id'] == 'pais_region' and f_val == '' %}
+                                                {% set f_val = 'México' %}
+                                            {% endif %}
+
                                             <div class="sf-field-group" {% if field['tipo'] in ['Texto largo', 'UI_Contactos', 'Checkboxes'] %}style="grid-column: span 2;"{% endif %}>
                                                 <div class="sf-label">
                                                     {% if field['req'] and not modo_lectura %}<span class="sf-req">*</span>{% endif %}{{ field['campo'] }}
@@ -674,6 +687,7 @@ HTML_TEMPLATE = """
                                                 {% if field['tipo'] == 'UI_Contactos' %}
                                                     <!-- INTERFAZ DINÁMICA DE CONTACTOS ADICIONALES -->
                                                     <div class="contactos-container-render" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
+                                                        <!-- Fichas de contactos se renderizan con JS -->
                                                     </div>
                                                     {% if not modo_lectura %}
                                                     <button type="button" class="sf-btn-sub" style="width:fit-content;" onclick="abrirModalContacto()">+ Agregar Contacto Adicional</button>
@@ -703,7 +717,8 @@ HTML_TEMPLATE = """
                                                         <option value="">--Seleccione {{ field['campo'] }}--</option>
                                                         {% if field['opts'] %}
                                                             {% for opt in field['opts'] %}
-                                                                <option value="{{ opt }}" {% if f_val == opt %}selected{% endif %}>{{ opt }}</option>
+                                                                {% set is_selected = (f_val == opt) or (field['id'] == 'pais_region' and opt == 'México' and f_val == '') %}
+                                                                <option value="{{ opt }}" {% if is_selected %}selected{% endif %}>{{ opt }}</option>
                                                             {% endfor %}
                                                         {% endif %}
                                                     </select>
@@ -716,9 +731,10 @@ HTML_TEMPLATE = """
                                                 {% elif field['tipo'] == 'Email' %}
                                                     <input type="email" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] == 'Teléfono' %}
-                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="+52 81 0000 0000" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="{% if field['id'] == 'whatsapp' %}+52 1 81 1234 5678{% else %}+52 81 0000 0000{% endif %}" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] in ['Número', 'Porcentaje (%)', 'Moneda ($)'] %}
-                                                    <input type="number" step="any" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %}>
+                                                    <!-- BLOQUEO ESTRICTO DE NEGATIVOS EN INPUTS NUMÉRICOS -->
+                                                    <input type="number" step="any" min="0" oninput="if(this.value < 0) this.value = '';" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %}>
                                                 {% else %}
                                                     <input type="text" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if field['id'] == 'gerente_area' %}readonly style="pointer-events:none; background-color:#f3f3f3;"{% endif %} {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% endif %}
