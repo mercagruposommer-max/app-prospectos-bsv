@@ -538,7 +538,6 @@ HTML_TEMPLATE = """
                             <tr>
                                 <td><input type="checkbox"></td>
                                 
-                                <!-- CLIC EN EL NOMBRE: MODO LECTURA NO EDITABLE -->
                                 <td>
                                     <form method="POST" style="display:inline;">
                                         <input type="hidden" name="action_type" value="ver_lectura">
@@ -693,7 +692,7 @@ HTML_TEMPLATE = """
                                                     <button type="button" class="sf-btn-sub" style="width:fit-content;" onclick="abrirModalContacto()">+ Agregar Contacto Adicional</button>
                                                     {% endif %}
                                                     <input type="hidden" name="{{ field['id'] }}" id="input_contactos_adic" value="{{ f_val }}">
-
+                                                    
                                                 {% elif field['tipo'] == 'Checkboxes' %}
                                                     <!-- INTERFAZ MULTIPLE CHECKBOX (EJ. AREAS DE INTERES) -->
                                                     <div class="sf-checkbox-group" data-req="{% if field['req'] %}true{% else %}false{% endif %}">
@@ -731,9 +730,8 @@ HTML_TEMPLATE = """
                                                 {% elif field['tipo'] == 'Email' %}
                                                     <input type="email" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] == 'Teléfono' %}
-                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="{% if field['id'] == 'whatsapp' %}+52 1 81 1234 5678{% else %}+52 81 0000 0000{% endif %}" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
+                                                    <input type="tel" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" placeholder="+52 81 0000 0000" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
                                                 {% elif field['tipo'] in ['Número', 'Porcentaje (%)', 'Moneda ($)'] %}
-                                                    <!-- BLOQUEO ESTRICTO DE NEGATIVOS EN INPUTS NUMÉRICOS -->
                                                     <input type="number" step="any" min="0" oninput="if(this.value < 0) this.value = '';" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if modo_lectura %}disabled{% endif %}>
                                                 {% else %}
                                                     <input type="text" id="input-{{ field['id'] }}" name="{{ field['id'] }}" value="{{ f_val }}" class="sf-input" data-req="{% if field['req'] %}true{% else %}false{% endif %}" {% if field['id'] == 'gerente_area' %}readonly style="pointer-events:none; background-color:#f3f3f3;"{% endif %} {% if modo_lectura %}disabled{% endif %} oninput="actualizarHighlights()">
@@ -1218,7 +1216,6 @@ HTML_TEMPLATE = """
         });
         
         actualizarGeografia();
-        inicializarContactos();
     });
 </script>
 
